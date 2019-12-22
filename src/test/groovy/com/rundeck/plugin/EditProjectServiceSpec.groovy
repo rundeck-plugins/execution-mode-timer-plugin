@@ -11,8 +11,5 @@ class EditProjectServiceSpec extends Specification implements ServiceUnitTest<Ed
     def cleanup() {
     }
 
-    void "test something"() {
-        expect:"fix me"
-            true == true
-    }
+
 }

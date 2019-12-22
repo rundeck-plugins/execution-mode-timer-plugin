@@ -12,6 +12,8 @@ class ExecutionControllerInterceptorSpec extends Specification implements Interc
 
     }
 
+    /*
+
     void "Test executionController interceptor matching"() {
         when:"A request matches the interceptor"
             withRequest(controller:"executionController")
@@ -19,4 +21,6 @@ class ExecutionControllerInterceptorSpec extends Specification implements Interc
         then:"The interceptor does match"
             interceptor.doesMatch()
     }
+
+     */
 }

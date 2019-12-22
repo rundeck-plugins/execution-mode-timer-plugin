@@ -3,13 +3,12 @@
 
 ## Install
 
-Add to local maven 
+Build plugin 
 ```
-mvn install:install-file -Dfile=build/libs/enable-later-executions-plugin-0.1.jar -DgroupId=com.rundeck.plugins -DartifactId=enable-later -Dversion=0.0.1 -Dpackaging=jar
+gradle clean build
 ```
 
-Add dependency rundeck (`rundeckapp/build.gradle`)
-
+Install rundeck
 ```
-compile ("com.rundeck.plugins:enable-later:0.0.1")
+cp build/lib/enable-later-executions-plugin-0.1.jar $RDECK_BASE/server/lib
 ```

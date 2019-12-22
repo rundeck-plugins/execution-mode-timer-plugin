@@ -11,8 +11,5 @@ class ExecutionModeServiceSpec extends Specification implements ServiceUnitTest<
     def cleanup() {
     }
 
-    void "test something"() {
-        expect:"fix me"
-            true == false
-    }
+
 }
