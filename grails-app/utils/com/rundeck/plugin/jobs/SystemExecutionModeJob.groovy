@@ -20,8 +20,6 @@ class SystemExecutionModeJob implements InterruptableJob {
         ExecutionModeService executionModeService = fetchExecutionModeService(context.jobDetail.jobDataMap)
 
         config.active = false
-        config.action = null
-        config.value = null
 
         boolean active = true
         if(config.action == "disable"){
@@ -30,8 +28,13 @@ class SystemExecutionModeJob implements InterruptableJob {
 
         executionModeService.setExecutionsAreActive(active)
 
+
+        config.action = null
+        config.value = null
+
         def storagePath = ExecutionModeService.EXECUTION_MODE_STORAGE_PATH_BASE + "executionModeLater.properties"
         executionModeService.saveConfig(storagePath, config)
+
 
     }
 

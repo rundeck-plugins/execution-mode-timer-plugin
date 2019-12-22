@@ -33,7 +33,6 @@ class FrameworkControllerInterceptor {
                 projProps.putAll(pconfigurable.props)
             }
 
-            println(projProps)
             boolean saveStatus = editProjectService.saveExecutionLaterSettings(project, projProps)
         }
 
