@@ -86,3 +86,29 @@ grailsPublish {
 assets {
     packagePlugin = true
 }
+
+task cleanPlugin(type: GradleBuild) {
+    buildFile = 'ui-enable-execution-later/build.gradle'
+    tasks = ['clean']
+}
+
+
+task plugin(type: GradleBuild ) {
+    buildFile = 'ui-enable-execution-later/build.gradle'
+    tasks = ['clean','build']
+}
+
+
+task copyArtifact(type: Copy, dependsOn:plugin) {
+    print("copyArtifact")
+    from "ui-enable-execution-later/build/distributions/ui-execution-mode-later-1.0.0-SNAPSHOT.zip"
+    into "$buildDir/libs/"
+}
+
+
+build.dependsOn plugin
+build.dependsOn copyArtifact
+
+clean.dependsOn cleanPlugin
+
+
