@@ -21,10 +21,8 @@ buildscript {
         mavenCentral()
     }
 }
-plugins {
-    id 'pl.allegro.tech.build.axion-release' version '1.7.0'
-    id 'com.bertramlabs.asset-pipeline' version '2.11.6'
-}
+
+apply plugin: 'com.bertramlabs.asset-pipeline'
 
 ext.pluginName = 'Execution Mode Later UI Plugin'
 ext.pluginDescription = 'Enable/Disable execution/schedule later.'
@@ -34,28 +32,7 @@ ext.buildDateString=new Date().format("yyyy-MM-dd'T'HH:mm:ssX")
 ext.archivesBaseName = "ui-execution-mode-later"
 ext.pluginBaseFolder = "."
 
-/*
-scmVersion {
-    ignoreUncommittedChanges = true
-    tag {
-        prefix = ''
-        versionSeparator = ''
-        def origDeserialize=deserialize
-        //apend .0 to satisfy semver if the tag version is only X.Y
-        deserialize = { config, position, tagName ->
-            def orig = origDeserialize(config, position, tagName)
-            if (orig.split('\\.').length < 3) {
-                orig += ".0"
-            }
-            orig
-        }
-    }
-}
-*/
-
-
-project.version = "1.0.0-SNAPSHOT"//scmVersion.version
-ext.archiveFilename = ext.archivesBaseName + '-' + version
+ext.archiveFilename = ext.archivesBaseName + '-' + scmVersion.version
 
 assets {
     verbose = true
@@ -103,7 +80,7 @@ configurations {
 task pluginZip(type: Jar) {
     destinationDir = file("build/distributions")
     baseName = project.ext.archivesBaseName
-    version = project.version
+    version = scmVersion.version
     extension = 'zip'
 
     from("${project.buildDir}/zip-contents") {
@@ -115,7 +92,7 @@ task pluginZip(type: Jar) {
         attributes 'Rundeck-Plugin-Name': pluginName.toString(),
                    'Rundeck-Plugin-Description': pluginDescription.toString(),
                    'Rundeck-Plugin-Archive': 'true',
-                   'Rundeck-Plugin-File-Version': project.version,
+                   'Rundeck-Plugin-File-Version': scmVersion.version,
                    'Rundeck-Plugin-Author': sopsCopyright,
                    'Rundeck-Plugin-URL': sopsUrl,
                    'Rundeck-Plugin-Date': buildDateString
@@ -123,13 +100,6 @@ task pluginZip(type: Jar) {
 }
 
 
-task build(dependsOn: 'pluginZip') << {
-
-}
-
-task clean(type: Delete) {
-    delete('build')
-}
 
 pluginZip.doFirst {
     def assetsDir = "${project.buildDir}/assets/resources"
@@ -164,4 +134,11 @@ project.pluginZip.mustRunAfter 'assetCompile'
 
 artifacts {
     add('default', pluginZip)
+}
+task clean(type: Delete) {
+    delete('build')
+}
+
+task build(dependsOn: ['pluginZip']) {
+    println("child build")
 }

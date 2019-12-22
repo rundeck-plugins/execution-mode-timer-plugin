@@ -8,8 +8,40 @@ buildscript {
         classpath "com.bertramlabs.plugins:asset-pipeline-gradle:2.14.2"
     }
 }
+plugins {
+    id 'pl.allegro.tech.build.axion-release' version '1.7.0'
+    id 'com.bertramlabs.asset-pipeline' version '2.11.6'
 
-version "0.1"
+}
+
+scmVersion {
+    ignoreUncommittedChanges = true
+    tag {
+        prefix = ''
+        versionSeparator = ''
+        def origDeserialize=deserialize
+        //apend .0 to satisfy semver if the tag version is only X.Y
+        deserialize = { config, position, tagName ->
+            def orig = origDeserialize(config, position, tagName)
+            if (orig.split('\\.').length < 3) {
+                orig += ".0"
+            }
+            orig
+        }
+    }
+}
+version = scmVersion.version
+project.version = scmVersion.version
+ext.version = scmVersion.version
+project.ext.version = scmVersion.version
+ext.globalVersion =  scmVersion.version
+
+subprojects {
+    ext {
+        version = scmVersion.version
+    }
+}
+
 group "com.rundeck.plugin"
 
 apply plugin:"eclipse"
@@ -87,28 +119,8 @@ assets {
     packagePlugin = true
 }
 
-task cleanPlugin(type: GradleBuild) {
-    buildFile = 'ui-enable-execution-later/build.gradle'
-    tasks = ['clean']
-}
-
-
-task plugin(type: GradleBuild ) {
-    buildFile = 'ui-enable-execution-later/build.gradle'
-    tasks = ['clean','build']
-}
-
-
-task copyArtifact(type: Copy, dependsOn:plugin) {
-    print("copyArtifact")
-    from "ui-enable-execution-later/build/distributions/ui-execution-mode-later-1.0.0-SNAPSHOT.zip"
+task copyArtifact(type: Copy, dependsOn:build) {
+    println("copyArtifact")
+    from "ui-enable-execution-later/build/distributions/ui-execution-mode-later-${project.version}.zip"
     into "$buildDir/libs/"
 }
-
-
-build.dependsOn plugin
-build.dependsOn copyArtifact
-
-clean.dependsOn cleanPlugin
-
-
