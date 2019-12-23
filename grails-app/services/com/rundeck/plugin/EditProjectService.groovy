@@ -610,58 +610,62 @@ class EditProjectService implements ProjectConfigurable {
 
     void initProcess(){
 
-        def projects  = frameworkService.projectNames()
-        projects.each {project->
-            String executionLaterPath="extraConfig/executionLater.properties"
-            IRundeckProject rundeckProject =  frameworkService.getFrameworkProject(project)
+        try{
 
-            def settings = getScheduleExecutionLater(rundeckProject, executionLaterPath)
-            if(settings){
-                if(settings.executions?.active){
+            def projects  = frameworkService.projectNames()
+            projects.each {project->
+                String executionLaterPath="extraConfig/executionLater.properties"
+                IRundeckProject rundeckProject =  frameworkService.getFrameworkProject(project)
 
-                    Date startAt = PluginUtil.laterDate(settings.executions?.dateSaved, settings.executions?.value, DATE_FORMAT)
-                    Date now = new Date()
-                    def difference = PluginUtil.getDateDiff(now, startAt, TimeUnit.MINUTES)
+                def settings = getScheduleExecutionLater(rundeckProject, executionLaterPath)
+                if(settings){
+                    if(settings?.executions?.active){
 
-                    if(difference>0){
-                        scheduleExecutionsLaterJob(project, "executions", [project: project,
-                                                                           type: "executions",
-                                                                           rundeckProject: rundeckProject,
-                                                                           config: settings.executions,
-                                                                           editProjectService: this])
-                    }else{
-                        settings.executions.active=false
-                        settings.executions.action=null
-                        settings.executions.value=null
+                        Date startAt = PluginUtil.laterDate(settings.executions?.dateSaved, settings.executions?.value, DATE_FORMAT)
+                        Date now = new Date()
+                        def difference = PluginUtil.getDateDiff(now, startAt, TimeUnit.MINUTES)
 
-                        saveExecutionLater(rundeckProject, executionLaterPath, settings)
+                        if(difference>0){
+                            scheduleExecutionsLaterJob(project, "executions", [project: project,
+                                                                               type: "executions",
+                                                                               rundeckProject: rundeckProject,
+                                                                               config: settings.executions,
+                                                                               editProjectService: this])
+                        }else{
+                            settings.executions.active=false
+                            settings.executions.action=null
+                            settings.executions.value=null
+
+                            saveExecutionLater(rundeckProject, executionLaterPath, settings)
+                        }
+
+
                     }
 
+                    if(settings?.schedule?.active){
+                        Date startAt = PluginUtil.laterDate(settings.schedule?.dateSaved, settings.schedule?.value, DATE_FORMAT)
+                        Date now = new Date()
+                        def difference = PluginUtil.getDateDiff(now, startAt, TimeUnit.MINUTES)
 
-                }
+                        if(difference>0){
+                            scheduleExecutionsLaterJob(project, "schedule", [project: project,
+                                                                             type: "schedule",
+                                                                             rundeckProject: rundeckProject,
+                                                                             config: settings.schedule,
+                                                                             editProjectService: this])
+                        }else{
+                            settings.schedule.active=false
+                            settings.schedule.action=null
+                            settings.schedule.value=null
 
-                if(settings.schedule?.active){
-                    Date startAt = PluginUtil.laterDate(settings.schedule?.dateSaved, settings.schedule?.value, DATE_FORMAT)
-                    Date now = new Date()
-                    def difference = PluginUtil.getDateDiff(now, startAt, TimeUnit.MINUTES)
-
-                    if(difference>0){
-                        scheduleExecutionsLaterJob(project, "schedule", [project: project,
-                                                                         type: "schedule",
-                                                                         rundeckProject: rundeckProject,
-                                                                         config: settings.schedule,
-                                                                         editProjectService: this])
-                    }else{
-                        settings.schedule.active=false
-                        settings.schedule.action=null
-                        settings.schedule.value=null
-
-                        saveExecutionLater(rundeckProject, executionLaterPath, settings)
+                            saveExecutionLater(rundeckProject, executionLaterPath, settings)
+                        }
                     }
                 }
             }
+
+        }catch(Exception e){
+            log.warn("error initProcess: ${e.message}")
         }
-
-
     }
 }

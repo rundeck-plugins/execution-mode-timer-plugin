@@ -12,14 +12,13 @@ class FrameworkControllerInterceptorSpec extends Specification implements Interc
 
     }
 
-    /*
+
     void "Test frameworkController interceptor matching"() {
         when:"A request matches the interceptor"
-            withRequest(controller:"frameworkController")
+            withRequest(controller:"framework", action:"saveProject")
 
         then:"The interceptor does match"
             interceptor.doesMatch()
     }
 
-     */
 }

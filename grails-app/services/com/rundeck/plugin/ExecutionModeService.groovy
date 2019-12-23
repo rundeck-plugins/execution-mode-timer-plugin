@@ -271,26 +271,28 @@ class ExecutionModeService{
 
     void initProcess() {
 
-        def storagePath = EXECUTION_MODE_STORAGE_PATH_BASE + "executionModeLater.properties"
-        def savedSettings = getConfig(storagePath)
+        try{
+            def storagePath = EXECUTION_MODE_STORAGE_PATH_BASE + "executionModeLater.properties"
+            def savedSettings = getConfig(storagePath)
 
-        if(savedSettings.active){
+            if(savedSettings?.active){
+                Date startAt = PluginUtil.laterDate(savedSettings.dateSaved, savedSettings.value, DATE_FORMAT)
+                Date now = new Date()
+                def difference = PluginUtil.getDateDiff(now, startAt, TimeUnit.MINUTES)
 
-            Date startAt = PluginUtil.laterDate(savedSettings.dateSaved, savedSettings.value, DATE_FORMAT)
-            Date now = new Date()
-            def difference = PluginUtil.getDateDiff(now, startAt, TimeUnit.MINUTES)
+                if(difference>0){
+                    scheduleExecutionsLaterJob([config: savedSettings,
+                                                executionModeService: this])
+                }else{
+                    savedSettings.active=false
+                    savedSettings.action=null
+                    savedSettings.value=null
 
-            if(difference>0){
-                scheduleExecutionsLaterJob([config: savedSettings,
-                                            executionModeService: this])
-            }else{
-                savedSettings.active=false
-                savedSettings.action=null
-                savedSettings.value=null
-
-                saveConfig(storagePath, savedSettings)
+                    saveConfig(storagePath, savedSettings)
+                }
             }
+        }catch(Exception e){
+            log.warn("error initProcess: ${e.message}")
         }
-
     }
 }

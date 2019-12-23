@@ -19,19 +19,17 @@ class EditProjectController {
     def frameworkService
     def editProjectService
 
-    private boolean authorizeSystemAdmin() {
+    def boolean requireAuth(String project) {
 
-        UserAndRolesAuthContext authContext = frameworkService.getAuthContextForSubject(session.subject)
+        def authContext =
+                frameworkService.getAuthContextForSubjectAndProject(session.subject, project)
         if (!frameworkService.authorizeApplicationResource(
                 authContext,
-                AuthorizationUtil.resourceType('system'),
+                AuthorizationUtil.resourceType(RES_TYPE_SYSTEM),
                 ACTION_ADMIN
         )) {
             request.errorCode = 'request.error.unauthorized.message'
-            request.errorArgs = [
-                    'Calendar (admin)',
-                    'Server',
-                    frameworkService.getServerUUID()]
+            request.errorArgs = ['Calendar (admin)', 'Server']
             response.status = HttpServletResponse.SC_FORBIDDEN
             request.titleCode = 'request.error.unauthorized.title'
 
@@ -42,10 +40,9 @@ class EditProjectController {
     }
 
     def getExecutionLater(String project) {
-        if (!authorizeSystemAdmin()) {
+        if (!requireAuth(project)) {
             return
         }
-
         String executionLaterPath="extraConfig/executionLater.properties"
         IRundeckProject rundeckProject =  frameworkService.getFrameworkProject(project)
         Map result = editProjectService.getScheduleExecutionLater(rundeckProject, executionLaterPath)
@@ -57,7 +54,7 @@ class EditProjectController {
     }
 
     def getNextExecutionChangeStatus(String project){
-        if (!authorizeSystemAdmin()) {
+        if (!requireAuth(project)) {
             return
         }
 
