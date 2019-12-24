@@ -234,8 +234,10 @@ class ExecutionModeService{
                     msg = "Execution will be ${settings.action} in ${duration.days} days, ${duration.hours} hrs, ${duration.minutes} min ."
                 }else if(duration.hours != 0){
                     msg = "Execution will be ${settings.action} in ${duration.hours} hrs, ${duration.minutes} min."
-                }else{
+                }else if(duration.minutes != 0){
                     msg = "Execution will be ${settings.action} in ${duration.minutes} min."
+                }else{
+                    msg = "Execution will be ${settings.action} in ${duration.seconds} sec."
                 }
 
                 return msg

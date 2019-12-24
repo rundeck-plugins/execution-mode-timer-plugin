@@ -23,7 +23,7 @@ import java.text.DateFormat
 import java.text.SimpleDateFormat
 import java.util.concurrent.TimeUnit
 
-class EditProjectService implements ProjectConfigurable {
+class UpdateModeProjectService implements ProjectConfigurable {
 
     public static final String CONF_PROJECT_EXECUTION_LATER_ENABLE = 'project.later.executions.enable'
     public static final String CONF_PROJECT_EXECUTION_LATER_DISABLE = 'project.later.executions.disable'
@@ -534,8 +534,10 @@ class EditProjectService implements ProjectConfigurable {
                     msg = "${type} will be ${action} in ${duration.days} days, ${duration.hours} hrs, ${duration.minutes} min ."
                 }else if(duration.hours != 0){
                     msg = "${type} will be ${action} in ${duration.hours} hrs, ${duration.minutes} min."
-                }else{
+                }else if(duration.minutes != 0){
                     msg = "${type} will be ${action} in ${duration.minutes} min."
+                }else{
+                    msg = "${type} will be ${action} in ${duration.seconds} sec."
                 }
 
 

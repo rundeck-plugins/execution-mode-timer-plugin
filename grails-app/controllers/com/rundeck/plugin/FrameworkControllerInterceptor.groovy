@@ -5,7 +5,7 @@ class FrameworkControllerInterceptor {
 
     int order = HIGHEST_PRECEDENCE + 106
     def frameworkService
-    def editProjectService
+    def updateModeProjectService
 
     FrameworkControllerInterceptor() {
         match(controller: "framework", action: "saveProject")
@@ -33,7 +33,7 @@ class FrameworkControllerInterceptor {
                 projProps.putAll(pconfigurable.props)
             }
 
-            boolean saveStatus = editProjectService.saveExecutionLaterSettings(project, projProps)
+            boolean saveStatus = updateModeProjectService.saveExecutionLaterSettings(project, projProps)
         }
 
         true

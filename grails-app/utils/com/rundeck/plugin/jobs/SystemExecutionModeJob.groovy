@@ -1,6 +1,6 @@
 package com.rundeck.plugin.jobs
 
-import com.rundeck.plugin.EditProjectService
+
 import com.rundeck.plugin.ExecutionModeService
 import org.quartz.InterruptableJob
 import org.quartz.JobExecutionContext

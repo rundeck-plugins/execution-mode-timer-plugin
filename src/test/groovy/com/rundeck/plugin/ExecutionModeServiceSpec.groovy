@@ -51,7 +51,7 @@ class ExecutionModeServiceSpec extends Specification implements ServiceUnitTest<
 
         Map config = [activeLater: false, activeLaterValue:null, passiveLater:true, passiveLaterValue:"10h"  ]
 
-        DateFormat dateFormat = new SimpleDateFormat(EditProjectService.DATE_FORMAT);
+        DateFormat dateFormat = new SimpleDateFormat(UpdateModeProjectService.DATE_FORMAT);
         Date date = new Date()
         Calendar calendar = Calendar.getInstance()
         calendar.setTime(date)
@@ -83,7 +83,7 @@ class ExecutionModeServiceSpec extends Specification implements ServiceUnitTest<
 
         Map config = [activeLater: activeLater, activeLaterValue:activeLaterValue, passiveLater:false, passiveLaterValue: null]
 
-        DateFormat dateFormat = new SimpleDateFormat(EditProjectService.DATE_FORMAT);
+        DateFormat dateFormat = new SimpleDateFormat(UpdateModeProjectService.DATE_FORMAT);
         Date date = new Date()
         Calendar calendar = Calendar.getInstance()
         calendar.setTime(date)
@@ -122,7 +122,7 @@ class ExecutionModeServiceSpec extends Specification implements ServiceUnitTest<
 
     def "test initProcess"() {
         given:
-        DateFormat dateFormat = new SimpleDateFormat(EditProjectService.DATE_FORMAT);
+        DateFormat dateFormat = new SimpleDateFormat(UpdateModeProjectService.DATE_FORMAT);
         Date date = new Date()
         Calendar calendar = Calendar.getInstance()
         calendar.setTime(date)
@@ -151,7 +151,7 @@ class ExecutionModeServiceSpec extends Specification implements ServiceUnitTest<
 
     def "test initProcess null data"() {
         given:
-        DateFormat dateFormat = new SimpleDateFormat(EditProjectService.DATE_FORMAT);
+        DateFormat dateFormat = new SimpleDateFormat(UpdateModeProjectService.DATE_FORMAT);
         Date date = new Date()
         Calendar calendar = Calendar.getInstance()
         calendar.setTime(date)

@@ -1,7 +1,6 @@
 package com.rundeck.plugin
 
 import com.dtolabs.rundeck.core.authorization.AuthorizationUtil
-import com.dtolabs.rundeck.core.authorization.UserAndRolesAuthContext
 import com.dtolabs.rundeck.core.common.IRundeckProject
 import grails.converters.JSON
 
@@ -17,7 +16,7 @@ class EditProjectController {
     ]
 
     def frameworkService
-    def editProjectService
+    def updateModeProjectService
 
     def boolean requireAuth(String project) {
 
@@ -45,7 +44,7 @@ class EditProjectController {
         }
         String executionLaterPath="extraConfig/executionLater.properties"
         IRundeckProject rundeckProject =  frameworkService.getFrameworkProject(project)
-        Map result = editProjectService.getScheduleExecutionLater(rundeckProject, executionLaterPath)
+        Map result = updateModeProjectService.getScheduleExecutionLater(rundeckProject, executionLaterPath)
 
         render(
                 result as JSON,
@@ -58,8 +57,8 @@ class EditProjectController {
             return
         }
 
-        def executionStatus = editProjectService.nextExecutionTime(project,"executions")
-        def scheduleStatus = editProjectService.nextExecutionTime(project,"schedule")
+        def executionStatus = updateModeProjectService.nextExecutionTime(project,"executions")
+        def scheduleStatus = updateModeProjectService.nextExecutionTime(project,"schedule")
 
         render(
                 [execution: executionStatus, schedule: scheduleStatus] as JSON,

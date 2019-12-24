@@ -1,6 +1,6 @@
 package com.rundeck.plugin.jobs
 
-import com.rundeck.plugin.EditProjectService
+import com.rundeck.plugin.UpdateModeProjectService
 import org.quartz.InterruptableJob
 import org.quartz.JobExecutionContext
 import org.quartz.JobExecutionException
@@ -21,7 +21,7 @@ class ExecutionStatusJob implements InterruptableJob {
         def rundeckProject = context.jobDetail.jobDataMap.get('rundeckProject')
 
         String executionLaterPath="extraConfig/executionLater.properties"
-        EditProjectService editProjectService = fetchEditProjectService(context.jobDetail.jobDataMap)
+        UpdateModeProjectService editProjectService = fetchEditProjectService(context.jobDetail.jobDataMap)
 
         //get saved value
         def executionLater = [:]
@@ -71,12 +71,12 @@ class ExecutionStatusJob implements InterruptableJob {
 
     }
 
-    private EditProjectService fetchEditProjectService(def jobDataMap) {
+    private UpdateModeProjectService fetchEditProjectService(def jobDataMap) {
         def es = jobDataMap.get("editProjectService")
         if (es==null) {
             throw new RuntimeException("ExecutionService could not be retrieved from JobDataMap!")
         }
-        if (! (es instanceof EditProjectService)) {
+        if (! (es instanceof UpdateModeProjectService)) {
             throw new RuntimeException("JobDataMap contained invalid ExecutionService type: " + es.getClass().getName())
         }
         return es

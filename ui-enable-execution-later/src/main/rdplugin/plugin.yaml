@@ -5,7 +5,7 @@ version: "@version@"
 url: "@url@"
 rundeckPluginVersion: 2.0
 description: Execution Mode Later Plugin UI
-rundeckCompatibilityVersion: 3.x
+rundeckCompatibilityVersion: 3.2.x
 targetHostCompatibility: all
 license: Apache 2.0
 tags:

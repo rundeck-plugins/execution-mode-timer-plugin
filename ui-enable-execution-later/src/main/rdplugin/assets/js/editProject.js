@@ -28,8 +28,8 @@ jQuery(function () {
 
     if (pagePath == 'framework/editProject') {
 
-        jQuery(".groupTitle").css('font-weight', 'bold');
-        jQuery(".groupTitle").after("<br>");
+        jQuery(".projectConfigurableTitle").css('font-weight', 'bold');
+        jQuery(".projectConfigurableTitle").after("<br>");
 
 
         var project = rundeckPage.project();
@@ -50,15 +50,15 @@ jQuery(function () {
         var disableExecutionId = jQuery( "input[name^='extraConfig.scheduledExecutionService.disableExecution']" ).attr("id");
         var disableScheduledId = jQuery( "input[name^='extraConfig.scheduledExecutionService.disableSchedule']" ).attr("id");
 
-        var disableExecutionLaterId = jQuery( "input[name^='extraConfig.enableLaterExecutionsPluginEditProjectService.executionLaterDisable']" ).attr("id");
-        var disableExecutionLaterValueId = jQuery( "input[name^='extraConfig.enableLaterExecutionsPluginEditProjectService.executionLaterDisableValue']" ).attr("id");
-        var enableExecutionLaterId = jQuery( "input[name^='extraConfig.enableLaterExecutionsPluginEditProjectService.executionLaterEnable']" ).attr("id");
-        var enableExecutionLaterValueId = jQuery( "input[name^='extraConfig.enableLaterExecutionsPluginEditProjectService.executionLaterEnableValue']" ).attr("id");
+        var disableExecutionLaterId = jQuery( "input[name^='extraConfig.updateModeProjectService.executionLaterDisable']" ).attr("id");
+        var disableExecutionLaterValueId = jQuery( "input[name^='extraConfig.updateModeProjectService.executionLaterDisableValue']" ).attr("id");
+        var enableExecutionLaterId = jQuery( "input[name^='extraConfig.updateModeProjectService.executionLaterEnable']" ).attr("id");
+        var enableExecutionLaterValueId = jQuery( "input[name^='extraConfig.updateModeProjectService.executionLaterEnableValue']" ).attr("id");
 
-        var disableScheduleLaterId = jQuery( "input[name^='extraConfig.enableLaterExecutionsPluginEditProjectService.scheduledLaterDisable']" ).attr("id");
-        var disableScheduleLaterValueId = jQuery( "input[name^='extraConfig.enableLaterExecutionsPluginEditProjectService.scheduledLaterDisableValue']" ).attr("id");
-        var enableScheduleLaterId = jQuery( "input[name^='extraConfig.enableLaterExecutionsPluginEditProjectService.scheduledLaterEnable']" ).attr("id");
-        var enableScheduleLaterValueId = jQuery( "input[name^='extraConfig.enableLaterExecutionsPluginEditProjectService.scheduledLaterEnableValue']" ).attr("id");
+        var disableScheduleLaterId = jQuery( "input[name^='extraConfig.updateModeProjectService.scheduledLaterDisable']" ).attr("id");
+        var disableScheduleLaterValueId = jQuery( "input[name^='extraConfig.updateModeProjectService.scheduledLaterDisableValue']" ).attr("id");
+        var enableScheduleLaterId = jQuery( "input[name^='extraConfig.updateModeProjectService.scheduledLaterEnable']" ).attr("id");
+        var enableScheduleLaterValueId = jQuery( "input[name^='extraConfig.updateModeProjectService.scheduledLaterEnableValue']" ).attr("id");
 
         jQuery('label[for='+  disableExecutionLaterValueId  +']').css('font-weight', 'normal');
         jQuery('label[for='+  enableExecutionLaterValueId  +']').css('font-weight', 'normal');

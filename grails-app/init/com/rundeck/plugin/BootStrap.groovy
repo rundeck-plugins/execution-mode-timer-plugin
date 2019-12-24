@@ -3,7 +3,7 @@ package com.rundeck.plugin
 class BootStrap {
 
     def executionModeService
-    def editProjectService
+    def updateModeProjectService
 
 
     def timer(String name,Closure clos){
@@ -20,8 +20,8 @@ class BootStrap {
             executionModeService.initProcess()
         }
 
-        timer("editProjectService.init") {
-            editProjectService.initProcess()
+        timer("updateModeProjectService.init") {
+            updateModeProjectService.initProcess()
         }
 
 

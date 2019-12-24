@@ -4,12 +4,11 @@ import com.dtolabs.rundeck.core.common.IRundeckProject
 import grails.testing.services.ServiceUnitTest
 import org.quartz.Scheduler
 import spock.lang.Specification
-import org.quartz.TriggerKey
 
 import java.text.DateFormat
 import java.text.SimpleDateFormat
 
-class EditProjectServiceSpec extends Specification implements ServiceUnitTest<EditProjectService>{
+class UpdateModeProjectServiceSpec extends Specification implements ServiceUnitTest<UpdateModeProjectService>{
 
     def setup() {
     }
@@ -309,7 +308,7 @@ class EditProjectServiceSpec extends Specification implements ServiceUnitTest<Ed
         def projectList=['TestProject']
 
 
-        DateFormat dateFormat = new SimpleDateFormat(EditProjectService.DATE_FORMAT);
+        DateFormat dateFormat = new SimpleDateFormat(UpdateModeProjectService.DATE_FORMAT);
         Date date = new Date()
         Calendar calendar = Calendar.getInstance()
         calendar.setTime(date)
