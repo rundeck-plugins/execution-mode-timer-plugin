@@ -63,7 +63,6 @@ class EditProjectControllerSpec extends Specification implements ControllerUnitT
         response.json.schedule  == [active:false]
 
     }
-
 }
 
 class MockFrameworkService{
@@ -72,6 +71,7 @@ class MockFrameworkService{
 
     boolean authorizeApplicationResource = true
     boolean authorizeApplicationResourceNonAdmin = false
+    def projectList
     String frameworkNodeName
     Map frameworkPropertiesMap = [:]
     def getAuthContextForSubjectAndProject(Object a, Object b){
@@ -122,6 +122,18 @@ class MockFrameworkService{
 
     void setRundeckProject(IRundeckProject rundeckProject) {
         this.rundeckProject = rundeckProject
+    }
+
+    def updateFrameworkProjectConfig(String project,Properties properties, Set<String> removePrefixes){
+        [success:true]
+    }
+
+    boolean isClusterModeEnabled() {
+        false
+    }
+
+    def projectNames(){
+        projectList
     }
 }
 

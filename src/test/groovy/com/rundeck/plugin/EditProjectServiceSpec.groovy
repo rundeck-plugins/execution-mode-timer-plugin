@@ -3,8 +3,11 @@ package com.rundeck.plugin
 import com.dtolabs.rundeck.core.common.IRundeckProject
 import grails.testing.services.ServiceUnitTest
 import org.quartz.Scheduler
-import org.quartz.Trigger
 import spock.lang.Specification
+import org.quartz.TriggerKey
+
+import java.text.DateFormat
+import java.text.SimpleDateFormat
 
 class EditProjectServiceSpec extends Specification implements ServiceUnitTest<EditProjectService>{
 
@@ -58,6 +61,64 @@ class EditProjectServiceSpec extends Specification implements ServiceUnitTest<Ed
 
         service.frameworkService  = mockFrameworkService
 
+        when:
+        def result = service.saveExecutionLaterSettings(project,properties)
+        then:
+        result==false
+
+
+    }
+
+
+    def "test simple saveExecutionLaterSettings new settigns"(){
+        given:
+        String project = "TestProject"
+
+        def propertiesData = ["project.disable.schedule": "false",
+                              "project.disable.executions": "false",
+                              "project.later.executions.enable": "false",
+                              "project.later.executions.disable": "true",
+                              "project.later.executions.enable.value": null,
+                              "project.later.executions.disable.value": "1h",
+                              "project.later.schedule.enable": "false",
+                              "project.later.schedule.disable": "true",
+                              "project.later.schedule.enable.value": null,
+                              "project.later.schedule.disable.value": "1h",
+        ]
+
+        Properties properties = new Properties()
+        propertiesData.each {key, value->
+            if(value){
+                properties.put(key,value)
+            }
+        }
+
+        String propertiesString = "bad-data"
+
+        def rundeckProject = Mock(IRundeckProject){
+            existsFileResource(_) >> true
+            loadFileResource(_, _) >> { args ->
+                if(propertiesString){
+                    args[1].write(propertiesString?.bytes)
+                    propertiesString?.length()
+                }
+            }
+        }
+
+        def mockFrameworkService = new MockFrameworkService(authorizeApplicationResource: true,
+                frameworkProjectsTestData: [
+                        TestProject: [projectProperties: propertiesData]
+                ]
+        )
+        mockFrameworkService.setRundeckProject(rundeckProject)
+
+
+        service.frameworkService  = mockFrameworkService
+        service.scheduledExecutionService  = new MockScheduledExecutionService(isScheduledRegister: false)
+
+        service.quartzScheduler = Mock(Scheduler){
+            2*scheduleJob(_,_)
+        }
         when:
         def result = service.saveExecutionLaterSettings(project,properties)
         then:
@@ -116,13 +177,13 @@ class EditProjectServiceSpec extends Specification implements ServiceUnitTest<Ed
         when:
         def result = service.saveExecutionLaterSettings(project,properties)
         then:
-        result==true
+        result==resultStatus
 
         where:
-        executionLater | schedulerLater | quartzCalls
-        "false"       | "false"        |      0
-        "true"        | "false"        |      1
-        "true"        | "true"         |      2
+        executionLater | schedulerLater | quartzCalls | resultStatus
+        "false"       | "false"        |      0 | false
+        "true"        | "false"        |      1 | true
+        "true"        | "true"         |      2 | true
 
 
     }
@@ -177,13 +238,117 @@ class EditProjectServiceSpec extends Specification implements ServiceUnitTest<Ed
         when:
         def result = service.saveExecutionLaterSettings(project,properties)
         then:
-        result==true
+        result==resultStatus
 
         where:
-        executionDisable | scheduleDisable | quartzCalls
-        "false"          | "false"         |     0
-        "true"           | "false"         |     1
-        "true"           | "true"          |     2
+        executionDisable | scheduleDisable | quartzCalls | resultStatus
+        "false"          | "false"         |     0 | false
+        "true"           | "false"         |     1 | true
+        "true"           | "true"          |     2 | true
+
+
+    }
+
+    def "test editProject"() {
+        given:
+        String project = "TestProject"
+        String propertiesString = '{}'
+
+        def propertiesData = ["project.disable.schedule": disableSchedule,
+                              "project.disable.executions": disableExecution,
+                              "project.later.executions.disable": "true",
+                              "project.later.executions.disable.value": "3h",
+                              "project.later.schedule.disable": "true",
+                              "project.later.schedule.disable.value": "3h"
+        ]
+
+        def rundeckProject = Mock(IRundeckProject){
+            existsFileResource(_) >> true
+            loadFileResource(_, _) >> { args ->
+                args[1].write(propertiesString.bytes)
+                propertiesString.length()
+            }
+            getProjectProperties() >> propertiesData
+        }
+
+        def mockFrameworkService = new MockFrameworkService(authorizeApplicationResource: true)
+        mockFrameworkService.setRundeckProject(rundeckProject)
+
+        def quartzScheduler = Mock(Scheduler){
+            schedule * scheduleJob(_)
+            delete * deleteJob(_)
+        }
+
+        service.frameworkService  = mockFrameworkService
+        service.scheduledExecutionService  = new MockScheduledExecutionService(isScheduledRegister: false,scheduler: quartzScheduler)
+
+        when:
+        def result = service.editProject(rundeckProject,project,disable, executionLater, scheduleLater)
+        then:
+        result!=null
+
+        where:
+        disableExecution  | disableSchedule  | disable | executionLater | scheduleLater| delete | schedule
+        "false"           | "false"          | true    | true           | false        | 1      | 0
+        "false"           | "false"          | true    | false          | true         | 1      | 0
+        "true"            | "false"          | false   | true           | false        | 0      | 1
+        "false"           | "true"           | false   | false          | true         | 0      | 1
+
+    }
+
+    def "test initProcess"() {
+        given:
+
+        def propertiesData = ["project.disable.schedule": "false",
+                              "project.disable.executions": "false",
+                              "project.later.executions.disable": "true",
+                              "project.later.executions.disable.value": "3h",
+                              "project.later.schedule.disable": "true",
+                              "project.later.schedule.disable.value": "3h"
+        ]
+        def projectList=['TestProject']
+
+
+        DateFormat dateFormat = new SimpleDateFormat(EditProjectService.DATE_FORMAT);
+        Date date = new Date()
+        Calendar calendar = Calendar.getInstance()
+        calendar.setTime(date)
+        calendar.add(Calendar.MINUTE, savedTime)
+
+        def savedDate = dateFormat.format(calendar.getTime())
+
+        String propertiesString = '{"executions":{"active":"true", "action":"disable", "value":"'+executionValue+'","dateSaved":"'+savedDate+'"}, "schedule":{"active":"true", "action":"disable", "value":"'+scheduleValue+'","dateSaved":"'+savedDate+'"}}'
+
+        def rundeckProject = Mock(IRundeckProject){
+            existsFileResource(_) >> true
+            loadFileResource(_, _) >> { args ->
+                args[1].write(propertiesString.bytes)
+                propertiesString.length()
+            }
+            getProjectProperties() >> propertiesData
+        }
+
+        def mockFrameworkService = new MockFrameworkService(authorizeApplicationResource: true, projectList: projectList, frameworkProjectsTestData: [
+                TestProject: [projectProperties: propertiesData]
+        ])
+        mockFrameworkService.setRundeckProject(rundeckProject)
+
+        service.frameworkService = mockFrameworkService
+        service.quartzScheduler = Mock(Scheduler)
+        service.scheduledExecutionService  = new MockScheduledExecutionService(isScheduledRegister: false)
+
+        when:
+        service.initProcess()
+
+        then:
+        scheduleCalls* service.quartzScheduler.scheduleJob(_,_)
+
+        where:
+        executionValue | scheduleValue | savedTime | scheduleCalls
+        "2h"           | "2h"          | -110      | 2
+        "2h"           | "1h"          | -90       | 1
+        "1h"           | "1h"          | -70       | 0
+
 
 
     }
@@ -195,8 +360,20 @@ class EditProjectServiceSpec extends Specification implements ServiceUnitTest<Ed
 class MockScheduledExecutionService{
 
     boolean isScheduledRegister = false
+    Scheduler scheduler
 
     def hasJobScheduled(String jobName, String groupName){
         isScheduledRegister
+    }
+
+    def unscheduleJobsForProject(String project,String serverUUID=null){
+        scheduler.deleteJob(new org.quartz.JobKey("", ""))
+
+    }
+
+    def rescheduleJobs(String serverUUID = null, String project = null) {
+        def trigger = PluginUtil.createTrigger("jobName", "EXECUTIONS_JOB_GROUP_NAME", new Date())
+        scheduler.scheduleJob(trigger)
+
     }
 }

@@ -40,15 +40,18 @@ class ExecutionModeService{
         boolean newExecutionMode = false
         boolean save = false
 
-        if(requestActive != savedSettings.executionsAreActive){
-            newExecutionMode = true
-            save = true
-            savedSettings.executionsAreActive = requestActive
+        if(savedSettings){
+            if(requestActive != savedSettings?.executionsAreActive){
+                newExecutionMode = true
+                save = true
+                savedSettings.executionsAreActive = requestActive
+            }
         }
+
 
         if(newExecutionMode){
             removeScheduleJob()
-            if(savedSettings.active){
+            if(savedSettings?.active){
                 savedSettings.active = false
             }
         }
@@ -93,6 +96,8 @@ class ExecutionModeService{
         if(save) {
             saveConfig(storagePath, newSettings)
         }
+
+        return save
 
     }
 
@@ -150,13 +155,10 @@ class ExecutionModeService{
         if(configStorageService.existsFileResource(storagePath)){
             Map executionLater
 
-            ByteArrayOutputStream output = new ByteArrayOutputStream()
             try {
-                configStorageService.getFileResource(storagePath)
-
                 def resource = configStorageService.getFileResource(storagePath)
                 executionLater = new JsonSlurper().parseText(resource.contents.inputStream.getText())
-            } catch (IOException e) {
+            } catch (Exception e) {
                 return null
             }
 

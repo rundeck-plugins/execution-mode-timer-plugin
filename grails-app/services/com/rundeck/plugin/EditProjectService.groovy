@@ -268,7 +268,7 @@ class EditProjectService implements ProjectConfigurable {
             //remove schedule job
             save = true
             removeScheduleJob(project, "executions")
-            if(executionLater.active){
+            if(executionLater?.active){
                 executionLater.active = false
             }
 
@@ -293,7 +293,7 @@ class EditProjectService implements ProjectConfigurable {
             save = true
             removeScheduleJob(project, "schedule")
 
-            if(scheduleLater.active){
+            if(scheduleLater?.active){
                 scheduleLater.active = false
             }
         }
@@ -316,7 +316,7 @@ class EditProjectService implements ProjectConfigurable {
         if(save){
             saveExecutionLater(rundeckProject, executionLaterPath , result)
         }
-        true
+        save
     }
 
     def getScheduleExecutionLater(def rundeckProject, String path){
@@ -328,7 +328,7 @@ class EditProjectService implements ProjectConfigurable {
             try {
                 rundeckProject.loadFileResource(path, output)
                 executionLater =  new JsonSlurper().parseText(output.toString())
-            } catch (IOException e) {
+            } catch (Exception e) {
                 return null
             }
 
@@ -345,7 +345,7 @@ class EditProjectService implements ProjectConfigurable {
             try {
                 rundeckProject.loadFileResource(path, output)
                 executionLater =  new JsonSlurper().parseText(output.toString())
-            } catch (IOException e) {
+            } catch (Exception e) {
                 return null
             }
 
@@ -364,7 +364,7 @@ class EditProjectService implements ProjectConfigurable {
             try {
                 rundeckProject.loadFileResource(path, output)
                 executionLater = new JsonSlurper().parseText(output.toString())
-            } catch (IOException e) {
+            } catch (Exception e) {
                 return null
             }
 
@@ -559,7 +559,6 @@ class EditProjectService implements ProjectConfigurable {
                 if(!settings.executions.active){
                     return [active: false, msg: null]
                 }
-
                 action = settings.executions.action
             }
 
@@ -573,7 +572,6 @@ class EditProjectService implements ProjectConfigurable {
                 if(!settings.schedule.active){
                     return [active: false, msg: null]
                 }
-
                 action = settings.schedule.action
             }
         }
@@ -597,7 +595,6 @@ class EditProjectService implements ProjectConfigurable {
     }
 
     def getProjectExecutionStatus(def rundeckProject) {
-
         Map properties = rundeckProject.getProjectProperties()
         Properties projProps = new Properties()
         projProps.putAll(properties)
@@ -609,9 +606,7 @@ class EditProjectService implements ProjectConfigurable {
     }
 
     void initProcess(){
-
         try{
-
             def projects  = frameworkService.projectNames()
             projects.each {project->
                 String executionLaterPath="extraConfig/executionLater.properties"
@@ -626,11 +621,11 @@ class EditProjectService implements ProjectConfigurable {
                         def difference = PluginUtil.getDateDiff(now, startAt, TimeUnit.MINUTES)
 
                         if(difference>0){
-                            scheduleExecutionsLaterJob(project, "executions", [project: project,
-                                                                               type: "executions",
-                                                                               rundeckProject: rundeckProject,
-                                                                               config: settings.executions,
-                                                                               editProjectService: this])
+                            scheduleExecutionsLaterJob(project, "executions",   [project: project,
+                                                                                       type: "executions",
+                                                                                       rundeckProject: rundeckProject,
+                                                                                       config: settings.executions,
+                                                                                       editProjectService: this])
                         }else{
                             settings.executions.active=false
                             settings.executions.action=null
