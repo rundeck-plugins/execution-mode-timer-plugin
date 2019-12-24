@@ -120,7 +120,6 @@ assets {
 }
 
 task copyArtifact(type: Copy, dependsOn:build) {
-    println("copyArtifact")
     from "ui-enable-execution-later/build/distributions/ui-execution-mode-later-${project.version}.zip"
     into "$buildDir/libs/"
 }
