@@ -32,9 +32,8 @@ scmVersion {
 }
 version = scmVersion.version
 project.version = scmVersion.version
-ext.version = scmVersion.version
-project.ext.version = scmVersion.version
-ext.globalVersion =  scmVersion.version
+project.buildDir = buildDir
+
 
 subprojects {
     ext {
@@ -58,7 +57,7 @@ repositories {
 
 dependencies {
 
-    compile "org.rundeck:rundeck-core:3.2.0-SNAPSHOT"
+    compile "org.rundeck:rundeck-core:3.2.0-20191218"
 
     compile 'org.quartz-scheduler:quartz:2.3.1'
     compile 'org.grails.plugins:quartz:2.0.13'
@@ -119,7 +118,3 @@ assets {
     packagePlugin = true
 }
 
-task copyArtifact(type: Copy, dependsOn:build) {
-    from "ui-enable-execution-later/build/distributions/ui-execution-mode-later-${project.version}.zip"
-    into "$buildDir/libs/"
-}
