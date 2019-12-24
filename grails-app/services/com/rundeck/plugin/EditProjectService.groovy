@@ -531,11 +531,11 @@ class EditProjectService implements ProjectConfigurable {
                 String msg
 
                 if(duration.days != 0){
-                    msg = "Execution will be ${action} in ${duration.days} days, ${duration.hours} hrs, ${duration.minutes} min ."
+                    msg = "${type} will be ${action} in ${duration.days} days, ${duration.hours} hrs, ${duration.minutes} min ."
                 }else if(duration.hours != 0){
-                    msg = "Execution will be ${action} in ${duration.hours} hrs, ${duration.minutes} min."
+                    msg = "${type} will be ${action} in ${duration.hours} hrs, ${duration.minutes} min."
                 }else{
-                    msg = "Execution will be ${action} in ${duration.minutes} min."
+                    msg = "${type} will be ${action} in ${duration.minutes} min."
                 }
 
 
