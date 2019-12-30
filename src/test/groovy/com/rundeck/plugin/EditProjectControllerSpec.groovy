@@ -1,7 +1,11 @@
 package com.rundeck.plugin
 
-
+import com.dtolabs.rundeck.core.authorization.Authorization
+import com.dtolabs.rundeck.core.common.INodeSet
+import com.dtolabs.rundeck.core.common.IProjectInfo
+import com.dtolabs.rundeck.core.common.IProjectNodes
 import com.dtolabs.rundeck.core.common.IRundeckProject
+import com.dtolabs.rundeck.core.common.NodeFileParserException
 import grails.testing.web.controllers.ControllerUnitTest
 import spock.lang.Specification
 import javax.security.auth.Subject
@@ -22,7 +26,7 @@ class EditProjectControllerSpec extends Specification implements ControllerUnitT
         given:
         String projectName = "Test"
 
-        controller.updateModeProjectService = Mock(UpdateModeProjectService){
+        controller.editProjectService = Mock(EditProjectService){
             getScheduleExecutionLater(_,_)>>[executions:[active:false]]
         }
         controller.frameworkService = new MockFrameworkService(authorizeApplicationResource: true)
@@ -42,7 +46,7 @@ class EditProjectControllerSpec extends Specification implements ControllerUnitT
         given:
         String projectName = "Test"
 
-        controller.updateModeProjectService = Mock(UpdateModeProjectService){
+        controller.editProjectService = Mock(EditProjectService){
             nextExecutionTime(_,_)>>[active:false]
         }
         controller.frameworkService = new MockFrameworkService(authorizeApplicationResource: true)
@@ -59,10 +63,190 @@ class EditProjectControllerSpec extends Specification implements ControllerUnitT
         response.json.schedule  == [active:false]
 
     }
+
+    def "test api apiProjectEnableLater auth"(){
+        given:
+        String project = "TestProject"
+        controller.frameworkService = new MockFrameworkService(authorizeApplicationResource: false)
+        controller.apiService = new MockApiService(requireVersion: true)
+        controller.editProjectService = Mock(EditProjectService)
+
+        when:
+        request.method = "POST"
+        request.addHeader('accept', 'application/json')
+        controller.apiProjectEnableLater(project)
+
+        then:
+
+        response.status == 403
+    }
+
+    def "test api apiProjectDisableLater auth"(){
+        given:
+        String project = "TestProject"
+        controller.frameworkService = new MockFrameworkService(authorizeApplicationResource: false)
+        controller.apiService = new MockApiService(requireVersion: true)
+        controller.editProjectService = Mock(EditProjectService)
+
+        when:
+        request.method = "POST"
+        request.addHeader('accept', 'application/json')
+        controller.apiProjectDisableLater(project)
+
+        then:
+
+        response.status == 403
+    }
+
+    def "test api apiProjectEnableLater method"(){
+        given:
+        String project = "TestProject"
+        controller.frameworkService = new MockFrameworkService(authorizeApplicationResource: true)
+        controller.apiService = new MockApiService(requireVersion: true)
+        controller.editProjectService = Mock(EditProjectService)
+
+
+        when:
+        request.method = method
+        request.addHeader('accept', 'application/json')
+        controller.apiProjectEnableLater(project)
+
+        then:
+
+        response.status == statusCode
+
+        where:
+        method      | statusCode
+        'POST'      | 400
+        'GET'       | 405
+        'PUT'       | 405
+        'DELETE'    | 405
+
+    }
+
+    def "test api apiProjectDisableLater method"(){
+        given:
+        String project = "TestProject"
+        controller.frameworkService = new MockFrameworkService(authorizeApplicationResource: true)
+        controller.apiService = new MockApiService(requireVersion: true)
+        controller.editProjectService = Mock(EditProjectService)
+
+
+        when:
+        request.method = method
+        request.addHeader('accept', 'application/json')
+        controller.apiProjectDisableLater(project)
+
+        then:
+
+        response.status == statusCode
+
+        where:
+        method      | statusCode
+        'POST'      | 400
+        'GET'       | 405
+        'PUT'       | 405
+        'DELETE'    | 405
+
+    }
+
+    def "test api apiProjectDisableLater test"(){
+        given:
+        String project = "TestProject"
+        Properties properties = new Properties()
+        properties.put("project.disable.executions","false")
+        properties.put("project.disable.schedule","false")
+
+        def rundeckProject = Mock(IRundeckProject){
+            getProjectProperties() >> properties
+        }
+
+        MockFrameworkService mockFrameworkService = new MockFrameworkService(authorizeApplicationResource: true)
+        mockFrameworkService.setRundeckProject(rundeckProject)
+
+        controller.frameworkService = mockFrameworkService
+        controller.apiService = new MockApiService(requireVersion: true)
+        controller.editProjectService = Mock(EditProjectService)
+
+        when:
+        request.method = 'POST'
+        request.content = body
+        request.addHeader('accept', 'application/json')
+        controller.apiProjectDisableLater(project)
+
+        then:
+
+        saveCall*controller.editProjectService.saveExecutionLaterSettings(project, _)>>saved
+        response.json  != null
+        response.json  == [msg:msg, saved:saved]
+        response.status == responseStatus
+
+        where:
+        body                                                | saved     | responseStatus | msg                                   | saveCall
+        '{"type":"executions","value": "3m"}'.bytes         | true      | 200            | "Project Execution Mode Later saved"  | 1
+        '{"type":"schedule","value": "30m"}'.bytes          | true      | 200            | "Project Execution Mode Later saved"  | 1
+        '{"type":"executions","value": "3m"}'.bytes         | false     | 200            | "No changed found"                    | 1
+        '{"type":"schedule","value": "30m"}'.bytes          | false     | 200            | "No changed found"                    | 1
+        '{"type":"sdadasdsa","value": "3m"}'.bytes          | false     | 400            | "Format was not valid, the attribute type must be set with the proper value(executions or schedule)."  | 0
+        '{"value": "3m"}'.bytes                             | false     | 400            | "Format was not valid, the attribute type must be set (executions or schedule)."  | 0
+        '{"type":"executions","value": "badvalue"}'.bytes   | false     | 400            | "Format was not valid, the attribute value is not set properly. Use something like: 3m, 1h, 3d"  | 0
+        '{"type":"schedule"}'.bytes                         | false     | 400            | "Format was not valid, the attribute value must be set."  | 0
+        'badvalue'.bytes                                    | false     | 400            | "Format was not valid, the request must be a json object with the format: {\"type\":\"<executions|schedule>\",\"value\":\"<timeExpression>\"}"  | 0
+        null                                                | false     | 400            | "Format was not valid, the request must be a json object with the format: {\"type\":\"<executions|schedule>\",\"value\":\"<timeExpression>\"}"  | 0
+
+    }
+
+    def "test api apiProjectEnableLater test"(){
+        given:
+        String project = "TestProject"
+        Properties properties = new Properties()
+        properties.put("project.disable.executions","true")
+        properties.put("project.disable.schedule","true")
+
+        def rundeckProject = Mock(IRundeckProject){
+            getProjectProperties() >> properties
+        }
+
+        MockFrameworkService mockFrameworkService = new MockFrameworkService(authorizeApplicationResource: true)
+        mockFrameworkService.setRundeckProject(rundeckProject)
+
+        controller.frameworkService = mockFrameworkService
+        controller.apiService = new MockApiService(requireVersion: true)
+        controller.editProjectService = Mock(EditProjectService)
+
+        when:
+        request.method = 'POST'
+        request.content = body
+        request.addHeader('accept', 'application/json')
+        controller.apiProjectEnableLater(project)
+
+        then:
+
+        saveCall*controller.editProjectService.saveExecutionLaterSettings(project, _)>>saved
+        response.json  != null
+        response.json  == [msg:msg, saved:saved]
+        response.status == responseStatus
+
+        where:
+        body                                                | saved     | responseStatus | msg                                   | saveCall
+        '{"type":"executions","value": "3m"}'.bytes         | true      | 200            | "Project Execution Mode Later saved"  | 1
+        '{"type":"schedule","value": "30m"}'.bytes          | true      | 200            | "Project Execution Mode Later saved"  | 1
+        '{"type":"executions","value": "3m"}'.bytes         | false     | 200            | "No changed found"                    | 1
+        '{"type":"schedule","value": "30m"}'.bytes          | false     | 200            | "No changed found"                    | 1
+        '{"type":"sdadasdsa","value": "3m"}'.bytes          | false     | 400            | "Format was not valid, the attribute type must be set with the proper value(executions or schedule)."  | 0
+        '{"value": "3m"}'.bytes                             | false     | 400            | "Format was not valid, the attribute type must be set (executions or schedule)."  | 0
+        '{"type":"executions","value": "badvalue"}'.bytes   | false     | 400            | "Format was not valid, the attribute value is not set properly. Use something like: 3m, 1h, 3d"  | 0
+        '{"type":"schedule"}'.bytes                         | false     | 400            | "Format was not valid, the attribute value must be set."  | 0
+        'badvalue'.bytes                                    | false     | 400            | "Format was not valid, the request must be a json object with the format: {\"type\":\"<executions|schedule>\",\"value\":\"<timeExpression>\"}"  | 0
+        null                                                | false     | 400            | "Format was not valid, the request must be a json object with the format: {\"type\":\"<executions|schedule>\",\"value\":\"<timeExpression>\"}"  | 0
+
+    }
+
 }
 
 class MockFrameworkService{
 
+    String serverUUID
     IRundeckProject rundeckProject
 
     boolean authorizeApplicationResource = true
@@ -125,11 +309,12 @@ class MockFrameworkService{
     }
 
     boolean isClusterModeEnabled() {
-        false
+        serverUUID==null?false:true
     }
 
     def projectNames(){
         projectList
     }
+
 }
 

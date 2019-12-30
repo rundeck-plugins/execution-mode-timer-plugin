@@ -299,4 +299,8 @@ class ExecutionModeService{
             log.warn("error initProcess: ${e.message}")
         }
     }
+
+    def getCurrentStatus(){
+        executionService.executionsAreActive
+    }
 }

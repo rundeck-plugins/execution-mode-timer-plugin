@@ -13,6 +13,7 @@ import static org.quartz.TriggerBuilder.newTrigger
 
 class PluginUtil {
     static final Map<String, Long> TIME_UNITS = [s: 1, m: 60, h: 60 * 60, d: 24 * 60 * 60,w: 7 * 24 * 60 * 60, y: 365 * 24 * 60 * 60]
+    public static final int V34 = 34
 
     static boolean validateTimeDuration(String time){
         def matcher = (time =~ /(\d+)(.)?/)
