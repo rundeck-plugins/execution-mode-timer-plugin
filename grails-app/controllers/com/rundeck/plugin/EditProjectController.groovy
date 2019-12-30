@@ -1,7 +1,6 @@
 package com.rundeck.plugin
 
 import com.dtolabs.rundeck.core.authorization.AuthorizationUtil
-import com.dtolabs.rundeck.core.authorization.UserAndRolesAuthContext
 import com.dtolabs.rundeck.core.common.IRundeckProject
 import grails.converters.JSON
 
@@ -20,7 +19,7 @@ class EditProjectController {
     ]
 
     def frameworkService
-    def editProjectService
+    def updateModeProjectService
     def apiService
 
     def boolean requireAuth(String project) {
@@ -49,7 +48,7 @@ class EditProjectController {
         }
         String executionLaterPath="extraConfig/executionLater.properties"
         IRundeckProject rundeckProject =  frameworkService.getFrameworkProject(project)
-        Map result = editProjectService.getScheduleExecutionLater(rundeckProject, executionLaterPath)
+        Map result = updateModeProjectService.getScheduleExecutionLater(rundeckProject, executionLaterPath)
 
         render(
                 result as JSON,
@@ -62,8 +61,8 @@ class EditProjectController {
             return
         }
 
-        def executionStatus = editProjectService.nextExecutionTime(project,"executions")
-        def scheduleStatus = editProjectService.nextExecutionTime(project,"schedule")
+        def executionStatus = updateModeProjectService.nextExecutionTime(project,"executions")
+        def scheduleStatus = updateModeProjectService.nextExecutionTime(project,"schedule")
 
         render(
                 [execution: executionStatus, schedule: scheduleStatus] as JSON,
@@ -89,8 +88,8 @@ class EditProjectController {
             projProps.putAll(properties)
 
             //check if current status of project
-            def isExecutionDisabledNow = properties[EditProjectService.CONF_PROJECT_DISABLE_EXECUTION] == 'true'
-            def isScheduleDisabledNow = properties[EditProjectService.CONF_PROJECT_DISABLE_SCHEDULE] == 'true'
+            def isExecutionDisabledNow = properties[UpdateModeProjectService.CONF_PROJECT_DISABLE_EXECUTION] == 'true'
+            def isScheduleDisabledNow = properties[UpdateModeProjectService.CONF_PROJECT_DISABLE_SCHEDULE] == 'true'
 
             boolean canSave = true
 
@@ -125,7 +124,7 @@ class EditProjectController {
                 //save project settings
                 frameworkService.updateFrameworkProjectConfig(project, projProps, removePrefixes)
 
-                saved = editProjectService.saveExecutionLaterSettings(project, projProps)
+                saved = updateModeProjectService.saveExecutionLaterSettings(project, projProps)
                 if(saved){
                     msg = "Project Execution Mode Later saved"
                 }else{
@@ -166,8 +165,8 @@ class EditProjectController {
             projProps.putAll(properties)
 
             //check if current status of project
-            def isExecutionDisabledNow = properties[EditProjectService.CONF_PROJECT_DISABLE_EXECUTION] == 'true'
-            def isScheduleDisabledNow = properties[EditProjectService.CONF_PROJECT_DISABLE_SCHEDULE] == 'true'
+            def isExecutionDisabledNow = properties[UpdateModeProjectService.CONF_PROJECT_DISABLE_EXECUTION] == 'true'
+            def isScheduleDisabledNow = properties[UpdateModeProjectService.CONF_PROJECT_DISABLE_SCHEDULE] == 'true'
 
             boolean canSave = true
 
@@ -199,7 +198,7 @@ class EditProjectController {
                 //save project settings
                 frameworkService.updateFrameworkProjectConfig(project, projProps, removePrefixes)
 
-                saved = editProjectService.saveExecutionLaterSettings(project, projProps)
+                saved = updateModeProjectService.saveExecutionLaterSettings(project, projProps)
                 if(saved){
                     msg = "Project Execution Mode Later saved"
                 }else{

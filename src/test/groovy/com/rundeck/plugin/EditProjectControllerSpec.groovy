@@ -26,7 +26,7 @@ class EditProjectControllerSpec extends Specification implements ControllerUnitT
         given:
         String projectName = "Test"
 
-        controller.editProjectService = Mock(EditProjectService){
+        controller.updateModeProjectService = Mock(UpdateModeProjectService){
             getScheduleExecutionLater(_,_)>>[executions:[active:false]]
         }
         controller.frameworkService = new MockFrameworkService(authorizeApplicationResource: true)
@@ -46,7 +46,7 @@ class EditProjectControllerSpec extends Specification implements ControllerUnitT
         given:
         String projectName = "Test"
 
-        controller.editProjectService = Mock(EditProjectService){
+        controller.updateModeProjectService = Mock(UpdateModeProjectService){
             nextExecutionTime(_,_)>>[active:false]
         }
         controller.frameworkService = new MockFrameworkService(authorizeApplicationResource: true)
@@ -69,7 +69,7 @@ class EditProjectControllerSpec extends Specification implements ControllerUnitT
         String project = "TestProject"
         controller.frameworkService = new MockFrameworkService(authorizeApplicationResource: false)
         controller.apiService = new MockApiService(requireVersion: true)
-        controller.editProjectService = Mock(EditProjectService)
+        controller.updateModeProjectService = Mock(UpdateModeProjectService)
 
         when:
         request.method = "POST"
@@ -86,7 +86,7 @@ class EditProjectControllerSpec extends Specification implements ControllerUnitT
         String project = "TestProject"
         controller.frameworkService = new MockFrameworkService(authorizeApplicationResource: false)
         controller.apiService = new MockApiService(requireVersion: true)
-        controller.editProjectService = Mock(EditProjectService)
+        controller.updateModeProjectService = Mock(UpdateModeProjectService)
 
         when:
         request.method = "POST"
@@ -103,7 +103,7 @@ class EditProjectControllerSpec extends Specification implements ControllerUnitT
         String project = "TestProject"
         controller.frameworkService = new MockFrameworkService(authorizeApplicationResource: true)
         controller.apiService = new MockApiService(requireVersion: true)
-        controller.editProjectService = Mock(EditProjectService)
+        controller.updateModeProjectService = Mock(UpdateModeProjectService)
 
 
         when:
@@ -129,7 +129,7 @@ class EditProjectControllerSpec extends Specification implements ControllerUnitT
         String project = "TestProject"
         controller.frameworkService = new MockFrameworkService(authorizeApplicationResource: true)
         controller.apiService = new MockApiService(requireVersion: true)
-        controller.editProjectService = Mock(EditProjectService)
+        controller.updateModeProjectService = Mock(UpdateModeProjectService)
 
 
         when:
@@ -166,7 +166,7 @@ class EditProjectControllerSpec extends Specification implements ControllerUnitT
 
         controller.frameworkService = mockFrameworkService
         controller.apiService = new MockApiService(requireVersion: true)
-        controller.editProjectService = Mock(EditProjectService)
+        controller.updateModeProjectService = Mock(UpdateModeProjectService)
 
         when:
         request.method = 'POST'
@@ -176,7 +176,7 @@ class EditProjectControllerSpec extends Specification implements ControllerUnitT
 
         then:
 
-        saveCall*controller.editProjectService.saveExecutionLaterSettings(project, _)>>saved
+        saveCall*controller.updateModeProjectService.saveExecutionLaterSettings(project, _)>>saved
         response.json  != null
         response.json  == [msg:msg, saved:saved]
         response.status == responseStatus
@@ -212,7 +212,7 @@ class EditProjectControllerSpec extends Specification implements ControllerUnitT
 
         controller.frameworkService = mockFrameworkService
         controller.apiService = new MockApiService(requireVersion: true)
-        controller.editProjectService = Mock(EditProjectService)
+        controller.updateModeProjectService = Mock(UpdateModeProjectService)
 
         when:
         request.method = 'POST'
@@ -222,7 +222,7 @@ class EditProjectControllerSpec extends Specification implements ControllerUnitT
 
         then:
 
-        saveCall*controller.editProjectService.saveExecutionLaterSettings(project, _)>>saved
+        saveCall*controller.updateModeProjectService.saveExecutionLaterSettings(project, _)>>saved
         response.json  != null
         response.json  == [msg:msg, saved:saved]
         response.status == responseStatus
