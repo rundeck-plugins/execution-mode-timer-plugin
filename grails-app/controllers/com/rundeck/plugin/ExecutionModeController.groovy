@@ -75,6 +75,10 @@ class ExecutionModeController {
             return
         }
 
+        if (!apiService.requireVersion(request, response, PluginUtil.V34)) {
+            return
+        }
+
         def result = validateApi(request, response)
 
         def saved = false
@@ -115,6 +119,10 @@ class ExecutionModeController {
             return
         }
 
+        if (!apiService.requireVersion(request, response, PluginUtil.V34)) {
+            return
+        }
+
         def result = validateApi(request, response)
 
         def saved = false
@@ -149,10 +157,6 @@ class ExecutionModeController {
     }
 
     def validateApi( request,  response){
-        if (!apiService.requireVersion(request, response, PluginUtil.V34)) {
-            return
-        }
-
         boolean fail = false
         def errormsg = ""
         def value = null

@@ -75,6 +75,10 @@ class EditProjectController {
             return
         }
 
+        if (!apiService.requireVersion(request, response, PluginUtil.V34)) {
+            return
+        }
+
         def result = validateApi(request, response)
         def saved = false
         def msg = ""
@@ -152,6 +156,10 @@ class EditProjectController {
             return
         }
 
+        if (!apiService.requireVersion(request, response, PluginUtil.V34)) {
+            return
+        }
+
         def result = validateApi(request, response)
         def saved = false
         def msg = ""
@@ -221,10 +229,6 @@ class EditProjectController {
     }
 
     def validateApi( request,  response){
-        if (!apiService.requireVersion(request, response, PluginUtil.V34)) {
-            return
-        }
-
         boolean fail = false
         def errormsg = ""
         def config = null
