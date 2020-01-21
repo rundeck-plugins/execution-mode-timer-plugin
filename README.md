@@ -72,3 +72,171 @@ When a trigger event is enabled, a message will be displayed on the project's ho
 If any of the project status is changed (for example passed from disable to enable executions) and aan execution later trigger is scheduled, the trigger will be removed.
 
 If Rundeck is restarted, the triggers will be registered again in the startup process (if the date has not been reached).
+
+## API 
+
+This plugin enable the following endpoints
+
+The calendar feature has some APIs:
+
+### System Enable Execution Later
+
+**Request**:
+
+POST  /api/34/system/executions/enable/later
+
+**Request Content**:
+
+Content-Type: application/json
+
+**Request Body**:
+
+* value: Time value after the execution mode will be enabled (example: 2h, 2m, 30s)
+
+Body Example:
+
+```
+{"value":"3m"}
+```
+
+CURL example:
+```
+curl -X POST --header "Content-Type: application/json" -H "X-Rundeck-Auth-Token: XXX"  http://rundeck:4440/api/34/system/executions/enable/later --data '{"value":"1m"}'
+```
+
+
+### System Disable Execution Later
+
+**Request**:
+
+POST  /api/34/system/executions/disable/later
+
+**Request Content**:
+
+Content-Type: application/json
+
+**Request Body**:
+
+* value: Time value after the execution mode will be disabled (example: 2h, 2m, 30s)
+
+Body Example:
+
+```
+{"value":"3m"}
+```
+
+CURL example:
+```
+curl -X POST --header "Content-Type: application/json" -H "X-Rundeck-Auth-Token: XXX"  http://rundeck:4440/api/34/system/executions/disable/later --data '{"value":"1m"}'
+```
+
+
+### Project Enable Execution Later
+
+**Request**:
+
+POST  /api/34/project/<PROJECT>/enable/later
+
+**Request Content**:
+
+Content-Type: application/json
+
+**Request Body**:
+
+* type: Type that will be enabled: executions, schedule
+* value: Time value after the execution mode will be enabled (example: 2h, 2m, 30s)
+
+Body Example:
+
+```
+{"type":"schedule","value":"10m"}
+```
+
+CURL example:
+```
+curl -X POST --header "Content-Type: application/json" -H "X-Rundeck-Auth-Token: XXXXX"  http://rundeck:4440/api/34/project/<PROJECT>/enable/later --data '{"type":"schedule","value":"10m"}'
+```
+
+
+### Project Disable Execution Later
+
+**Request**:
+
+POST  /api/34/project/<PROJECT>/disable/later
+
+**Request Content**:
+
+Content-Type: application/json
+
+**Request Body**:
+
+* type: Type that will be disabled: executions, schedule
+* value: Time value after the execution mode will be disabled (example: 2h, 2m, 30s)
+
+Body Example:
+
+```
+{"type":"executions","value":"10m"}
+```
+
+CURL example:
+```
+curl -X POST --header "Content-Type: application/json" -H "X-Rundeck-Auth-Token: XXXXX"  http://rundeck:4440/api/34/project/<PROJECT>/disable/later --data '{"type":"executions","value":"10m"}'
+```
+
+## Rundeck CLI
+
+For now, download the BETA version that include the execution mode later API [here](https://github.com/robertopaez/rundeck-cli/releases/tag/v1.1.9)
+
+### System Enable Execution Later
+
+```
+rd system mode activelater 
+
+Set execution mode Active Later
+
+Usage: activeLater options
+	[--quiet -q] : Reduce output.
+	--timeValue -t value : Set the time value where the execution will be enable/disable. For example: 3m, 1h, 5d
+```
+
+### System Disable Execution Later
+
+```
+rd system mode disablelater
+
+Set execution mode Disable Later
+
+Usage: activeLater options
+	[--quiet -q] : Reduce output.
+	--timeValue -t value : Set the time value where the execution will be enable/disable. For example: 3m, 1h, 5d
+```
+### Project Enable Execution Later
+
+```
+rd projects mode enablelater
+
+enable executions/schedule mode later
+
+Usage: enableLater options
+	--project -p value : Project Name
+	[--quiet -q] : Reduce output.
+	--timeValue -v value : Set the time value where the execution will be enable/disable. For example: 3m, 1h, 5d
+	--type -t value : Type: executions or schedule
+
+```
+
+### Disable Enable Execution Later
+
+```
+rd projects mode disablelater
+
+disable executions/schedule mode later
+
+Usage: enableLater options
+	--project -p value : Project Name
+	[--quiet -q] : Reduce output.
+	--timeValue -v value : Set the time value where the execution will be enable/disable. For example: 3m, 1h, 5d
+	--type -t value : Type: executions or schedule
+```
+
