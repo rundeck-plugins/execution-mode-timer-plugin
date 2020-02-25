@@ -1,0 +1,18 @@
+language: java
+jdk:
+- openjdk8
+before_cache:
+- rm -f $HOME/.gradle/caches/modules-2/modules-2.lock
+cache:
+  directories:
+  - "$HOME/.gradle/caches/"
+  - "$HOME/.gradle/wrapper/"
+deploy:
+  provider: releases
+  api_key:
+    secure: Biod4Kqztnne6HmNznRAcGIAkVGyyAqJIm8cU5U8KuRz9QZYY/e51FW9zQ1L09QQFAY2iohew1sgYAId84etsWtlBrOfESstY8fk4iFcg6KJuWFTfPv5o168WEpzan43C/6zlnu3kLx53Erf673ThayKxDhBXaVNQc0rVsB6mE74kSOZqZHRcvEYYdzu1mYKL+T2RU8eVAWZBd50v0hMEYdBJXjEx5ZRQrGPYc0iJ/n2/WKzXKKhe6cKlET46BxeCIyhgDlSD1lgRKn+2eNBkZSgkvrp9+fdSgsJ0MBLNjBl3Z+Nop2+ZQV6d40l2oyJjVL247/TwzVYaiknkm++vDNsvrUVGCjbuzprjgO1Gk8caeQ4ae8KvTnyI+NrFE1niBI8A9uTslySy27EMGOXc2GQqcExLlsWXlQxHYYjHAowbL58U/8as/c96p5xkqQh9O5eGMbNUXZqSUib/3CcKDOfTliXajYvKArWApNvkSqugtlXxnJ94Z41gqadwYFItvyGNR8p98r1aehC8p789hsM/fsxTsH0fI+T5HnkHeDaG+R0FvAVxjDOJRgcMK3FpYc9v+Q6zKV9hKsWiPCWzi/XI8MIMNXY3eKbpQSp9cpFXUM5WZZ6Zh6in633ISV78XDUwZaxLkeWHGFyTQjbiih5MLFmzfq4NbN7c8Qb7F8=
+  file: 
+    - build/libs/enable-later-executions-plugin*.jar
+    - ui-enable-execution-later/build/distributions/ui-execution-mode-later*.zip
+  on:
+    repo: rundeck-plugins/execution-mode-later-plugin
