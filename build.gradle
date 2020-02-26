@@ -41,6 +41,13 @@ subprojects {
     }
 }
 
+configurations{
+    //define libs needed to be bundled into the WEB-INF/lib dir of the war
+    exportedLibs
+    compile.extendsFrom exportedLibs
+    spa
+}
+
 group "com.rundeck.plugin"
 
 apply plugin:"eclipse"
@@ -56,6 +63,8 @@ repositories {
 }
 
 dependencies {
+
+    spa project(path: ':ui-enable-execution-later', configuration: 'archives')
 
     compile "org.rundeck:rundeck-core:3.2.0-20191218"
 
@@ -117,4 +126,23 @@ grailsPublish {
 assets {
     packagePlugin = true
 }
+
+
+task copySpa(type: Copy) {
+    from configurations.spa
+    into "$projectDir/build/libs"
+
+    outputs.dir "$projectDir/build/libs"
+    include '**/*.zip'
+}
+
+tasks.build.dependsOn copySpa
+tasks.assemble.dependsOn copySpa
+task cleanSpa << {
+    delete(copySpa.outputs)
+    delete(buildDir)
+}
+tasks.clean.dependsOn cleanSpa
+
+
 
