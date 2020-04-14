@@ -1,3 +1,5 @@
+//= require lib/support
+//= require lib/knockout.unobtrusive.min
 
 var projectModeSupport = new ExecutionModeSupport()
 
@@ -8,7 +10,7 @@ jQuery(function () {
   var pluginName = RDPLUGIN['exec-mode-ui'];
   var pluginBase = rundeckPage.pluginBaseUrl(pluginName);
 
-  //console.log(pagePath)
+  console.log(pagePath)
 
   if(pagePath == 'menu/projectHome'){
         var project = rundeckPage.project();

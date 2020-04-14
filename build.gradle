@@ -45,7 +45,6 @@ configurations{
     //define libs needed to be bundled into the WEB-INF/lib dir of the war
     exportedLibs
     compile.extendsFrom exportedLibs
-    spa
 }
 
 group "com.rundeck.plugin"
@@ -64,9 +63,7 @@ repositories {
 
 dependencies {
 
-    spa project(path: ':ui-enable-execution-later', configuration: 'archives')
-
-    compile "org.rundeck:rundeck-core:3.2.0-20191218"
+    compile "org.rundeck:rundeck-core:${rundeckVersion}"
 
     compile 'org.quartz-scheduler:quartz:2.3.1'
     compile 'org.grails.plugins:quartz:2.0.13'
@@ -126,23 +123,3 @@ grailsPublish {
 assets {
     packagePlugin = true
 }
-
-
-task copySpa(type: Copy) {
-    from configurations.spa
-    into "$projectDir/build/libs"
-
-    outputs.dir "$projectDir/build/libs"
-    include '**/*.zip'
-}
-
-tasks.build.dependsOn copySpa
-tasks.assemble.dependsOn copySpa
-task cleanSpa << {
-    delete(copySpa.outputs)
-    delete(buildDir)
-}
-tasks.clean.dependsOn cleanSpa
-
-
-
