@@ -1,5 +1,6 @@
 package com.rundeck.plugin
 
+import com.rundeck.plugin.ui.UIEnableExecutionLaterFactory
 import grails.plugins.*
 
 class EnableLaterExecutionsPluginGrailsPlugin extends Plugin {
@@ -42,6 +43,9 @@ Brief summary/description of the plugin.
 
     Closure doWithSpring() { {->
             // TODO Implement runtime spring config (optional)
+        uIEnableExecutionLater(UIEnableExecutionLaterFactory) {
+            pluginRegistry = ref('rundeckPluginRegistry')
+        }
 
     }
     }
