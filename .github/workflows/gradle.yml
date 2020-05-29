@@ -25,10 +25,10 @@ jobs:
       - name: Get Release Version
         id: get_version
         run: VERSION=$(./gradlew currentVersion -q -Prelease.quiet) && echo ::set-output name=VERSION::$VERSION
-      - name: Upload execution-mode-later-plugin jar
+      - name: Upload execution-mode-timer-plugin jar
         uses: actions/upload-artifact@v1.0.0
         with:
           # Artifact name
           name: Grails-Plugin-${{ steps.get_version.outputs.VERSION }}
           # Directory containing files to upload
-          path: execution-later/build/libs/execution-later-${{ steps.get_version.outputs.VERSION }}.jar
+          path: rundeck-execution-mode-timer/build/libs/rundeck-execution-mode-timer-${{ steps.get_version.outputs.VERSION }}.jar

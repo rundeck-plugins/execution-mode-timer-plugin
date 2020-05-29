@@ -1,7 +1,7 @@
 gradle:
-  - execution-later
+  - rundeck-execution-mode-timer
 grails:
-  - execution-later
+  - rundeck-execution-mode-timer
 note:
   - "gradle: defines gradle projects to add to the enterprise build"
   - "grails: defines grails projects to include in enterprise app dependencies"
