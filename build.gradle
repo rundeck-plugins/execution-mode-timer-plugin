@@ -8,11 +8,10 @@ scmVersion {
 
 version = scmVersion.version
 
-group "com.rundeck.plugin"
 
 subprojects {
     version = scmVersion.version
-    group "com.rundeck.plugin"
+    group "com.rundeck.addons"
     ext {
         copyright = "© ${java.time.LocalDate.now().year}, Rundeck, Inc.".toString()
         projUrl = 'https://rundeck.com'
