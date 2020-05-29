@@ -15,11 +15,6 @@ gradle clean build
 cp build/libs/enable-later-executions-plugin-X.Y.Z.jar $RDECK_BASE/server/lib
 ```
 
-*  copy UI plugin to `$RDECK_BASE/libext`
-```
-cp ui-enable-execution-later/build/distributions/ui-execution-mode-later-X.Y.Z.zip $RDECK_BASE/libext
-```
-
 ## How to use it
 
 ### Global Execution Mode
