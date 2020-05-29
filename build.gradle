@@ -4,6 +4,10 @@ plugins {
 
 scmVersion {
     ignoreUncommittedChanges = true
+    tag {
+        prefix = 'v'
+        versionSeparator = ''
+    }
 }
 
 version = scmVersion.version
