@@ -16,7 +16,6 @@ apply plugin:"org.grails.grails-plugin"
 apply plugin:"asset-pipeline"
 apply plugin:"org.grails.grails-gsp"
 
-group "com.rundeck.plugin"
 
 repositories {
     mavenLocal()
