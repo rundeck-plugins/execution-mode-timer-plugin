@@ -43,7 +43,11 @@ configurations{
 
 dependencies {
 
-    compile "org.rundeck:rundeck-core:${rundeckVersion}"
+    if (findProject(":core")) {
+        compile project(":core")
+    }else{
+        compile "org.rundeck:rundeck-core:${rundeckVersion}"
+    }
 
     compile 'org.quartz-scheduler:quartz:2.3.1'
     compile 'org.grails.plugins:quartz:2.0.13'
