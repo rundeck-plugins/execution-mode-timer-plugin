@@ -74,9 +74,9 @@ jQuery(function () {
             });
        //console.log(status)
 
-       if(status.active == true){
-           appendMessage(status.action, status.msg)
-       }
+        if(status && status.active === true) {
+            appendMessage(status.action, status.msg)
+        }
    }
 
 
