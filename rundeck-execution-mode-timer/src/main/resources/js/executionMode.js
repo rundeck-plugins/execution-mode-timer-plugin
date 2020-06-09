@@ -58,13 +58,10 @@ jQuery(function () {
 
     let appBase = executionModeSupport._app_base_url(rundeckPage.baseUrl());
 
-    if(pagePath == 'menu/projectHome' || pagePath == 'menu/home' || pagePath == 'menu/executionMode'){
-
-        url = appBase + "/menu/executionMode/executionLater/nextTime"
-
+    if(pagePath === 'menu/projectHome' || pagePath === 'menu/home' || pagePath === 'menu/executionMode'){
         var status = null
         jQuery.ajax({
-                url: url,
+                url: appBase + "/menu/executionMode/executionLater/nextTime",
                 method: 'GET',
                 contentType: 'json',
                 async: false,
@@ -72,7 +69,6 @@ jQuery(function () {
                     status = data
                 }
             });
-       //console.log(status)
 
         if(status && status.active === true) {
             appendMessage(status.action, status.msg)
@@ -80,7 +76,7 @@ jQuery(function () {
    }
 
 
-  if (pagePath == 'menu/executionMode') {
+  if (pagePath === 'menu/executionMode') {
         var url = appBase + "/menu/executionMode/executionLater"
 
         var savedValues = null

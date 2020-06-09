@@ -190,7 +190,6 @@ jQuery(function () {
                     status = data
                 }
             });
-      console.log(status)
 
       return status
   }
