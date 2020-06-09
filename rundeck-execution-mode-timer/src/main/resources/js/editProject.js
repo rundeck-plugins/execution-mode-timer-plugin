@@ -10,25 +10,23 @@ jQuery(function () {
   var pluginName = RDPLUGIN['exec-mode-ui'];
   var pluginBase = rundeckPage.pluginBaseUrl(pluginName);
 
-  console.log(pagePath)
-
-  if(pagePath == 'menu/projectHome'){
+  if(pagePath === 'menu/projectHome'){
         var project = rundeckPage.project();
         var status = getProjectStatus(project)
         var messages = []
 
-        if(status.execution.active){
+        if(status && status.execution && status.execution.active){
             messages.push(status.execution.msg)
         }
 
-        if(status.schedule.active){
+        if(status && status.schedule && status.schedule.active){
             messages.push(status.schedule.msg)
 
         }
         appendListMessage(messages)
   }
 
-    if (pagePath == 'framework/editProject') {
+    if (pagePath === 'framework/editProject') {
 
         jQuery(".projectConfigurableTitle").css('font-weight', 'bold');
         jQuery(".projectConfigurableTitle").after("<br>");
@@ -39,11 +37,11 @@ jQuery(function () {
         var status = getProjectStatus(project)
         var messages = []
 
-        if(status.execution.active){
+        if(status && status.execution && status.execution.active){
             messages.push(status.execution.msg)
         }
 
-        if(status.schedule.active){
+        if(status && status.schedule && status.schedule.active){
             messages.push(status.schedule.msg)
 
         }
@@ -200,14 +198,14 @@ jQuery(function () {
     var action = null
 
     if(type == "execution"){
-        if(status.execution.active == true){
+        if(status && status.execution && status.execution.active == true){
             msg = status.execution.msg
             action = status.execution.action
         }
     }
 
     if(type == "schedule"){
-        if(status.schedule.active == true){
+        if(status && status.schedule && status.schedule.active == true){
             msg = status.schedule.msg
             action = status.schedule.action
         }
