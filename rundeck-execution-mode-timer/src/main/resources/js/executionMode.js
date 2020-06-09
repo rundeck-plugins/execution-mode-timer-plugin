@@ -100,7 +100,7 @@ jQuery(function () {
         var activeLaterValue = ""
         var passiveLaterValue = ""
 
-        if(savedValues.active){
+        if(savedValues && savedValues.active){
             if(savedValues.action == "disable"){
                 passiveLater = true
                 passiveLaterValue = savedValues.value
