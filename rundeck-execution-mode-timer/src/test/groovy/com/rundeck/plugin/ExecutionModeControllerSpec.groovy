@@ -31,7 +31,7 @@ class ExecutionModeControllerSpec extends Specification implements ControllerUni
         controller.frameworkService = new MockFrameworkService(authorizeApplicationResource: true)
 
         controller.executionModeService = Mock(ExecutionModeService){
-            nextExecutionTime()>>[active:false,msg:null]
+            getSystemModeChangeStatus()>> [active:false, msg:null]
         }
 
         when:

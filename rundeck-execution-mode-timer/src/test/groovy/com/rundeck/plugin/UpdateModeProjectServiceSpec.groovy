@@ -1,9 +1,12 @@
 package com.rundeck.plugin
 
 import com.dtolabs.rundeck.core.common.IRundeckProject
+import com.fasterxml.jackson.databind.ObjectMapper
 import grails.testing.services.ServiceUnitTest
 import org.quartz.Scheduler
+import org.quartz.Trigger
 import spock.lang.Specification
+import spock.lang.Unroll
 
 import java.text.DateFormat
 import java.text.SimpleDateFormat
@@ -352,6 +355,63 @@ class UpdateModeProjectServiceSpec extends Specification implements ServiceUnitT
 
     }
 
+    @Unroll
+    def "test getProjectModeChangeStatus"() {
+
+        given:
+            String project = "TestProject"
+
+            def data = [
+                executions: [
+                    active: isActive,
+                    action: action,
+                    value : '1h'
+                ],
+                schedule  : [
+                    active: isActive,
+                    action: action,
+                    value : '1h'
+                ]
+            ]
+            String jsonString = new ObjectMapper().writeValueAsString(data)
+
+            def rundeckProject = Mock(IRundeckProject) {
+                existsFileResource(_) >> true
+                loadFileResource(_, _) >> { args ->
+                    args[1].write(jsonString.bytes)
+                    jsonString.length()
+                }
+            }
+
+            def date = new Date() + 1
+
+            def mockFrameworkService = new MockFrameworkService(authorizeApplicationResource: true)
+            mockFrameworkService.setRundeckProject(rundeckProject)
+            service.frameworkService = mockFrameworkService
+            service.quartzScheduler = Mock(Scheduler) {
+                (hasDate ? 1 : 0) * getTrigger({ it.name == 'TestProject-' + type }) >> Mock(Trigger) {
+                    getNextFireTime() >> date
+                }
+            }
+
+        when:
+            def result = service.getProjectModeChangeStatus(project, type)
+        then:
+            result.active == isActive
+            result.action == (hasDate ? action : null)
+            result.nextFireTime == (hasDate ? date : null)
+
+        where:
+            isActive | action    | type         | hasDate
+            true     | 'enable'  | 'executions' | true
+            true     | 'disable' | 'executions' | true
+            false    | 'enable'  | 'executions' | false
+            false    | 'disable' | 'executions' | false
+            true     | 'enable'  | 'schedule'   | true
+            true     | 'disable' | 'schedule'   | true
+            false    | 'enable'  | 'schedule'   | false
+            false    | 'disable' | 'schedule'   | false
+    }
 
 
 }
