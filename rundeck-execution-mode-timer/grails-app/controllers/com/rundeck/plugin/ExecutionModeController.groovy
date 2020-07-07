@@ -3,6 +3,8 @@ package com.rundeck.plugin
 import com.dtolabs.rundeck.core.authorization.AuthorizationUtil
 import com.dtolabs.rundeck.core.authorization.UserAndRolesAuthContext
 import grails.converters.JSON
+import groovy.time.TimeCategory
+import groovy.time.TimeDuration
 
 import javax.servlet.http.HttpServletResponse
 
@@ -61,7 +63,24 @@ class ExecutionModeController {
             return
         }
 
-        def status = executionModeService.nextExecutionTime()
+        Map status = executionModeService.getSystemModeChangeStatus()
+
+        if(status.nextFireTime) {
+            Date now = new Date()
+            TimeDuration duration = TimeCategory.minus(status.nextFireTime, now)
+            if (duration.days != 0) {
+                status.msg = message(
+                    code: "executions.${status.action}.days",
+                    args: [duration.days, duration.hours, duration.minutes]
+                ).toString()
+            } else if (duration.hours != 0) {
+                status.msg = message(code: "executions.${status.action}.hours", args: [duration.hours, duration.minutes]).toString()
+            } else if (duration.minutes != 0) {
+                status.msg = message(code: "executions.${status.action}.minutes", args: [duration.minutes]).toString()
+            } else {
+                status.msg = message(code: "executions.${status.action}.seconds", args: [duration.seconds]).toString()
+            }
+        }
 
         render(
                 status as JSON,

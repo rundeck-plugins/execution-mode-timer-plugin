@@ -512,40 +512,11 @@ class UpdateModeProjectService implements ProjectConfigurable {
 
         return jobDetailBuilder.build()
     }
-
-
-    def nextExecutionTime(String project, String type) {
+    def getProjectModeChangeStatus(String project, String type) {
         IRundeckProject rundeckProject =  frameworkService.getFrameworkProject(project)
         String executionLaterPath="extraConfig/executionLater.properties"
 
         def settings = this.getScheduleExecutionLater(rundeckProject, executionLaterPath)
-
-        def getNextExecution = { String jobName, String typeName, String action->
-            def trigger = quartzScheduler.getTrigger(TriggerKey.triggerKey(jobName , EXECUTIONS_JOB_GROUP_NAME))
-            if(trigger){
-                Date date = trigger.getNextFireTime()
-                Date now = new Date()
-
-                TimeDuration duration = TimeCategory.minus(date, now)
-
-                String msg
-
-                if(duration.days != 0){
-                    msg = "${type} will be ${action} in ${duration.days} days, ${duration.hours} hrs, ${duration.minutes} min ."
-                }else if(duration.hours != 0){
-                    msg = "${type} will be ${action} in ${duration.hours} hrs, ${duration.minutes} min."
-                }else if(duration.minutes != 0){
-                    msg = "${type} will be ${action} in ${duration.minutes} min."
-                }else{
-                    msg = "${type} will be ${action} in ${duration.seconds} sec."
-                }
-
-
-                return msg
-            } else {
-                return null
-            }
-        }
 
         if(!settings){
             return [active: false, msg: null]
@@ -579,10 +550,11 @@ class UpdateModeProjectService implements ProjectConfigurable {
         }
 
         String jobName = "${project}-${type}"
-        def nextExecution = getNextExecution(jobName, type, action)
+        def trigger = quartzScheduler.getTrigger(TriggerKey.triggerKey(jobName, EXECUTIONS_JOB_GROUP_NAME))
+        def nextFireTime = trigger?.nextFireTime
 
-        if(nextExecution){
-            return [active: true, action: action, msg: nextExecution]
+        if(nextFireTime){
+            return [active: true, action: action, nextFireTime: nextFireTime]
         }else{
             return [active: false, action: action, msg: null]
         }

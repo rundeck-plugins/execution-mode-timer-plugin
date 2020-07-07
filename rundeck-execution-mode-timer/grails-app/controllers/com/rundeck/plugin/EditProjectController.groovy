@@ -3,6 +3,8 @@ package com.rundeck.plugin
 import com.dtolabs.rundeck.core.authorization.AuthorizationUtil
 import com.dtolabs.rundeck.core.common.IRundeckProject
 import grails.converters.JSON
+import groovy.time.TimeCategory
+import groovy.time.TimeDuration
 
 import javax.servlet.http.HttpServletResponse
 
@@ -61,8 +63,42 @@ class EditProjectController {
             return
         }
 
-        def executionStatus = updateModeProjectService.nextExecutionTime(project,"executions")
-        def scheduleStatus = updateModeProjectService.nextExecutionTime(project,"schedule")
+        def executionStatus = updateModeProjectService.getProjectModeChangeStatus(project, "executions")
+        def scheduleStatus = updateModeProjectService.getProjectModeChangeStatus(project, "schedule")
+
+        def now = new Date()
+        if(executionStatus.nextFireTime){
+            TimeDuration duration = TimeCategory.minus(executionStatus.nextFireTime, now)
+            if (duration.days != 0) {
+                executionStatus.msg = message(
+                    code: "executions.${executionStatus.action}.days",
+                    args: [duration.days, duration.hours, duration.minutes]
+                ).toString()
+            } else if (duration.hours != 0) {
+                executionStatus.msg = message(code: "executions.${executionStatus.action}.hours", args: [duration.hours, duration.minutes]).toString()
+            } else if (duration.minutes != 0) {
+                executionStatus.msg = message(code: "executions.${executionStatus.action}.minutes", args: [duration.minutes]).toString()
+            } else {
+                executionStatus.msg = message(code: "executions.${executionStatus.action}.seconds", args: [duration.seconds]).toString()
+            }
+        }
+
+        if(scheduleStatus.nextFireTime){
+            TimeDuration duration = TimeCategory.minus(scheduleStatus.nextFireTime, now)
+            if (duration.days != 0) {
+                scheduleStatus.msg = message(
+                    code: "schedules.${scheduleStatus.action}.days",
+                    args: [duration.days, duration.hours, duration.minutes]
+                ).toString()
+            } else if (duration.hours != 0) {
+                scheduleStatus.msg = message(code: "schedules.${scheduleStatus.action}.hours", args: [duration.hours, duration.minutes]).toString()
+            } else if (duration.minutes != 0) {
+                scheduleStatus.msg = message(code: "schedules.${scheduleStatus.action}.minutes", args: [duration.minutes]).toString()
+            } else {
+                scheduleStatus.msg = message(code: "schedules.${scheduleStatus.action}.seconds", args: [duration.seconds]).toString()
+            }
+        }
+
 
         render(
                 [execution: executionStatus, schedule: scheduleStatus] as JSON,

@@ -1,11 +1,7 @@
 package com.rundeck.plugin
 
-import com.dtolabs.rundeck.core.authorization.Authorization
-import com.dtolabs.rundeck.core.common.INodeSet
-import com.dtolabs.rundeck.core.common.IProjectInfo
-import com.dtolabs.rundeck.core.common.IProjectNodes
+
 import com.dtolabs.rundeck.core.common.IRundeckProject
-import com.dtolabs.rundeck.core.common.NodeFileParserException
 import grails.testing.web.controllers.ControllerUnitTest
 import spock.lang.Specification
 import javax.security.auth.Subject
@@ -47,7 +43,7 @@ class EditProjectControllerSpec extends Specification implements ControllerUnitT
         String projectName = "Test"
 
         controller.updateModeProjectService = Mock(UpdateModeProjectService){
-            nextExecutionTime(_,_)>>[active:false]
+            getProjectModeChangeStatus(_, _)>> [active:false]
         }
         controller.frameworkService = new MockFrameworkService(authorizeApplicationResource: true)
 

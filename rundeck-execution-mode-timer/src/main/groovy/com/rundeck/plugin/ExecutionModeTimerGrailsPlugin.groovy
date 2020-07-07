@@ -3,7 +3,7 @@ package com.rundeck.plugin
 import com.rundeck.plugin.ui.UIEnableExecutionLaterFactory
 import grails.plugins.*
 
-class EnableLaterExecutionsPluginGrailsPlugin extends Plugin {
+class ExecutionModeTimerGrailsPlugin extends Plugin {
 
     // the version or versions of Grails the plugin is designed for
     def grailsVersion = "3.3.10 > *"

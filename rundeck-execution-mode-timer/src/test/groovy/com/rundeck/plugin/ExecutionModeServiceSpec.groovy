@@ -1,8 +1,12 @@
 package com.rundeck.plugin
 
+import com.fasterxml.jackson.databind.ObjectMapper
+import grails.converters.JSON
 import grails.testing.services.ServiceUnitTest
 import org.quartz.Scheduler
+import org.quartz.Trigger
 import spock.lang.Specification
+import spock.lang.Unroll
 
 import java.text.DateFormat
 import java.text.SimpleDateFormat
@@ -172,6 +176,42 @@ class ExecutionModeServiceSpec extends Specification implements ServiceUnitTest<
     }
 
 
+    @Unroll
+    def "test getSystemModeChangeStatus"(){
+        given:
+            DateFormat dateFormat = new SimpleDateFormat(UpdateModeProjectService.DATE_FORMAT);
+            Date date = new Date()
+            Calendar calendar = Calendar.getInstance()
+            calendar.setTime(date)
+            calendar.add(Calendar.MINUTE, -90)
+
+            def executionValue = "10h"
+
+            def savedDate = dateFormat.format(calendar.getTime())
+            def data = [active: isActive, action: action, value: executionValue, dateSaved: savedDate, executionsAreActive: false]
+            def json= new ObjectMapper().writeValueAsString(data)
+
+            service.configStorageService = new MockConfigStorageService(isFileExists: true, data: json)
+            service.quartzScheduler = Mock(Scheduler){
+                (hasDate?1:0)*getTrigger(_) >> Mock(Trigger){
+                    getNextFireTime()>>date
+                }
+            }
+
+        when:
+            def result = service.getSystemModeChangeStatus()
+        then:
+            result.active==isActive
+            result.action==(hasDate?action:null)
+            result.nextFireTime==(hasDate?date:null)
+
+        where:
+            isActive | action    | hasDate
+            true     | 'enable'  | true
+            true     | 'disable' | true
+            false    | 'enable'  | false
+            false    | 'disable' | false
+    }
 
 }
 
