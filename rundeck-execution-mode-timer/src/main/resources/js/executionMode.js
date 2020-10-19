@@ -59,20 +59,20 @@ jQuery(function () {
     let appBase = executionModeSupport._app_base_url(rundeckPage.baseUrl());
 
     if(pagePath === 'menu/projectHome' || pagePath === 'menu/home' || pagePath === 'menu/executionMode'){
-        var status = null
+
         jQuery.ajax({
                 url: appBase + "/menu/executionMode/executionLater/nextTime",
                 method: 'GET',
                 contentType: 'json',
-                async: false,
                 success: function (data) {
-                    status = data
+                    let status = data
+                    if(status && status.active === true) {
+                        appendMessage(status.action, status.msg)
+                    }
                 }
-            });
+            })
 
-        if(status && status.active === true) {
-            appendMessage(status.action, status.msg)
-        }
+
    }
 
 
