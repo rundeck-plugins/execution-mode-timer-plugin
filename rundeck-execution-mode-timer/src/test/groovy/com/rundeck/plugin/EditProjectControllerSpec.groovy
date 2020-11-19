@@ -1,9 +1,12 @@
 package com.rundeck.plugin
 
-
+import com.dtolabs.rundeck.core.authorization.AuthContextProcessor
 import com.dtolabs.rundeck.core.common.IRundeckProject
 import grails.testing.web.controllers.ControllerUnitTest
+import org.rundeck.core.auth.AuthConstants
 import spock.lang.Specification
+import spock.lang.Unroll
+
 import javax.security.auth.Subject
 import com.dtolabs.rundeck.core.authentication.Group
 import com.dtolabs.rundeck.core.authentication.Username
@@ -25,7 +28,14 @@ class EditProjectControllerSpec extends Specification implements ControllerUnitT
         controller.updateModeProjectService = Mock(UpdateModeProjectService){
             getScheduleExecutionLater(_,_)>>[executions:[active:false]]
         }
-        controller.frameworkService = new MockFrameworkService(authorizeApplicationResource: true)
+        controller.frameworkService = new MockFrameworkService()
+
+        controller.rundeckAuthContextProcessor = Mock(AuthContextProcessor){
+            1 * getAuthContextForSubjectAndProject(_, projectName)>>Mock(UserAndRolesAuthContext)
+            1 * authResourceForProject(projectName)>>[:]
+            1 * authorizeApplicationResource(_, _, AuthConstants.ACTION_ADMIN) >> true
+            0*_(*_)
+        }
 
         when:
         controller.getExecutionLater(projectName)
@@ -45,7 +55,14 @@ class EditProjectControllerSpec extends Specification implements ControllerUnitT
         controller.updateModeProjectService = Mock(UpdateModeProjectService){
             getProjectModeChangeStatus(_, _)>> [active:false]
         }
-        controller.frameworkService = new MockFrameworkService(authorizeApplicationResource: true)
+        controller.frameworkService = new MockFrameworkService()
+
+        controller.rundeckAuthContextProcessor = Mock(AuthContextProcessor){
+            1 * getAuthContextForSubjectAndProject(_, projectName)>>Mock(UserAndRolesAuthContext)
+            1 * authResourceForProject(projectName)>>[:]
+            1 * authorizeApplicationResource(_, _, AuthConstants.ACTION_ADMIN) >> true
+            0*_(*_)
+        }
 
         when:
         controller.getNextExecutionChangeStatus(projectName)
@@ -63,7 +80,14 @@ class EditProjectControllerSpec extends Specification implements ControllerUnitT
     def "test api apiProjectEnableLater auth"(){
         given:
         String project = "TestProject"
-        controller.frameworkService = new MockFrameworkService(authorizeApplicationResource: false)
+        controller.frameworkService = new MockFrameworkService()
+
+            controller.rundeckAuthContextProcessor = Mock(AuthContextProcessor){
+                1 * getAuthContextForSubjectAndProject(_, project)>>Mock(UserAndRolesAuthContext)
+                1 * authResourceForProject(project)>>[:]
+                1 * authorizeApplicationResource(_, _, AuthConstants.ACTION_ADMIN) >> false
+                0*_(*_)
+            }
         controller.apiService = new MockApiService(requireVersion: true)
         controller.updateModeProjectService = Mock(UpdateModeProjectService)
 
@@ -80,7 +104,13 @@ class EditProjectControllerSpec extends Specification implements ControllerUnitT
     def "test api apiProjectDisableLater auth"(){
         given:
         String project = "TestProject"
-        controller.frameworkService = new MockFrameworkService(authorizeApplicationResource: false)
+        controller.frameworkService = new MockFrameworkService()
+            controller.rundeckAuthContextProcessor = Mock(AuthContextProcessor){
+                1 * getAuthContextForSubjectAndProject(_, project)>>Mock(UserAndRolesAuthContext)
+                1 * authResourceForProject(project)>>[:]
+                1 * authorizeApplicationResource(_, _, AuthConstants.ACTION_ADMIN) >> false
+                0*_(*_)
+            }
         controller.apiService = new MockApiService(requireVersion: true)
         controller.updateModeProjectService = Mock(UpdateModeProjectService)
 
@@ -94,10 +124,18 @@ class EditProjectControllerSpec extends Specification implements ControllerUnitT
         response.status == 403
     }
 
+    @Unroll
     def "test api apiProjectEnableLater method"(){
         given:
         String project = "TestProject"
-        controller.frameworkService = new MockFrameworkService(authorizeApplicationResource: true)
+        controller.frameworkService = new MockFrameworkService()
+
+            controller.rundeckAuthContextProcessor = Mock(AuthContextProcessor){
+                invocations * getAuthContextForSubjectAndProject(_, project)>>Mock(UserAndRolesAuthContext)
+                invocations * authResourceForProject(project)>>[:]
+                invocations * authorizeApplicationResource(_, _, AuthConstants.ACTION_ADMIN) >> true
+                0*_(*_)
+            }
         controller.apiService = new MockApiService(requireVersion: true)
         controller.updateModeProjectService = Mock(UpdateModeProjectService)
 
@@ -112,18 +150,26 @@ class EditProjectControllerSpec extends Specification implements ControllerUnitT
         response.status == statusCode
 
         where:
-        method      | statusCode
-        'POST'      | 400
-        'GET'       | 405
-        'PUT'       | 405
-        'DELETE'    | 405
+            method   | statusCode | invocations
+            'POST'   | 400        | 1
+            'GET'    | 405        | 0
+            'PUT'    | 405        | 0
+            'DELETE' | 405        | 0
 
     }
 
+    @Unroll
     def "test api apiProjectDisableLater method"(){
         given:
         String project = "TestProject"
-        controller.frameworkService = new MockFrameworkService(authorizeApplicationResource: true)
+        controller.frameworkService = new MockFrameworkService()
+
+            controller.rundeckAuthContextProcessor = Mock(AuthContextProcessor){
+                invocations * getAuthContextForSubjectAndProject(_, project)>>Mock(UserAndRolesAuthContext)
+                invocations * authResourceForProject(project)>>[:]
+                invocations * authorizeApplicationResource(_, _, AuthConstants.ACTION_ADMIN) >> true
+                0*_(*_)
+            }
         controller.apiService = new MockApiService(requireVersion: true)
         controller.updateModeProjectService = Mock(UpdateModeProjectService)
 
@@ -138,11 +184,11 @@ class EditProjectControllerSpec extends Specification implements ControllerUnitT
         response.status == statusCode
 
         where:
-        method      | statusCode
-        'POST'      | 400
-        'GET'       | 405
-        'PUT'       | 405
-        'DELETE'    | 405
+            method   | statusCode | invocations
+            'POST'   | 400        | 1
+            'GET'    | 405        | 0
+            'PUT'    | 405        | 0
+            'DELETE' | 405        | 0
 
     }
 
@@ -157,7 +203,14 @@ class EditProjectControllerSpec extends Specification implements ControllerUnitT
             getProjectProperties() >> properties
         }
 
-        MockFrameworkService mockFrameworkService = new MockFrameworkService(authorizeApplicationResource: true)
+        MockFrameworkService mockFrameworkService = new MockFrameworkService()
+
+            controller.rundeckAuthContextProcessor = Mock(AuthContextProcessor){
+                1 * getAuthContextForSubjectAndProject(_, project)>>Mock(UserAndRolesAuthContext)
+                1 * authResourceForProject(project)>>[:]
+                1 * authorizeApplicationResource(_, _, AuthConstants.ACTION_ADMIN) >> true
+                0*_(*_)
+            }
         mockFrameworkService.setRundeckProject(rundeckProject)
 
         controller.frameworkService = mockFrameworkService
@@ -203,7 +256,14 @@ class EditProjectControllerSpec extends Specification implements ControllerUnitT
             getProjectProperties() >> properties
         }
 
-        MockFrameworkService mockFrameworkService = new MockFrameworkService(authorizeApplicationResource: true)
+        MockFrameworkService mockFrameworkService = new MockFrameworkService()
+
+            controller.rundeckAuthContextProcessor = Mock(AuthContextProcessor){
+                1 * getAuthContextForSubjectAndProject(_, project)>>Mock(UserAndRolesAuthContext)
+                1 * authResourceForProject(project)>>[:]
+                1 * authorizeApplicationResource(_, _, AuthConstants.ACTION_ADMIN) >> true
+                0*_(*_)
+            }
         mockFrameworkService.setRundeckProject(rundeckProject)
 
         controller.frameworkService = mockFrameworkService
@@ -245,14 +305,9 @@ class MockFrameworkService{
     String serverUUID
     IRundeckProject rundeckProject
 
-    boolean authorizeApplicationResource = true
-    boolean authorizeApplicationResourceNonAdmin = false
     def projectList
     String frameworkNodeName
     Map frameworkPropertiesMap = [:]
-    def getAuthContextForSubjectAndProject(Object a, Object b){
-        return new SubjectAuthContext(null, null)
-    }
 
     Map frameworkProjectsTestData = [:]
 
@@ -261,35 +316,6 @@ class MockFrameworkService{
             return rundeckProject
         }
         frameworkProjectsTestData[name]
-    }
-
-    UserAndRolesAuthContext getAuthContextForUserAndRolesAndProject(String user, Collection roles, String project) {
-        def sub = new Subject()
-        sub.principals = [
-                new Username(user),
-                new Group("expect:" + project)
-        ] + roles.collect {
-            new Group(it)
-        }
-        return new SubjectAuthContext(sub, null)
-    }
-    def getAuthContextForSubject(Object a){
-        return new SubjectAuthContext(null, null)
-    }
-
-    def authorizeProjectResources(Object a, Object b, Object c, Object d){
-        return []
-    }
-    def authorizeApplicationResource(Object a, Object b, Object c){
-        return authorizeApplicationResource
-    }
-
-    def authorizeApplicationResourceAny(Object a, Object b, Object c){
-        return authorizeApplicationResource || authorizeApplicationResourceNonAdmin
-    }
-
-    def authorizeProjectJobAny(Object a, Object b, Object c, Object d){
-        return authorizeApplicationResource
     }
 
     IRundeckProject getRundeckProject() {

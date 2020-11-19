@@ -53,7 +53,7 @@ class UpdateModeProjectServiceSpec extends Specification implements ServiceUnitT
             }
         }
 
-        def mockFrameworkService = new MockFrameworkService(authorizeApplicationResource: true,
+        def mockFrameworkService = new MockFrameworkService(
                 frameworkProjectsTestData: [
                         TestProject: [projectProperties: propertiesData]
                 ]
@@ -107,7 +107,7 @@ class UpdateModeProjectServiceSpec extends Specification implements ServiceUnitT
             }
         }
 
-        def mockFrameworkService = new MockFrameworkService(authorizeApplicationResource: true,
+        def mockFrameworkService = new MockFrameworkService(
                 frameworkProjectsTestData: [
                         TestProject: [projectProperties: propertiesData]
                 ]
@@ -162,7 +162,7 @@ class UpdateModeProjectServiceSpec extends Specification implements ServiceUnitT
             }
         }
 
-        def mockFrameworkService = new MockFrameworkService(authorizeApplicationResource: true,
+        def mockFrameworkService = new MockFrameworkService(
                 frameworkProjectsTestData: [
                         TestProject: [projectProperties: propertiesData]
                 ]
@@ -223,7 +223,7 @@ class UpdateModeProjectServiceSpec extends Specification implements ServiceUnitT
             }
         }
 
-        def mockFrameworkService = new MockFrameworkService(authorizeApplicationResource: true,
+        def mockFrameworkService = new MockFrameworkService(
                 frameworkProjectsTestData: [
                         TestProject: [projectProperties: propertiesData]
                 ]
@@ -273,7 +273,7 @@ class UpdateModeProjectServiceSpec extends Specification implements ServiceUnitT
             getProjectProperties() >> propertiesData
         }
 
-        def mockFrameworkService = new MockFrameworkService(authorizeApplicationResource: true)
+        def mockFrameworkService = new MockFrameworkService()
         mockFrameworkService.setRundeckProject(rundeckProject)
 
         def quartzScheduler = Mock(Scheduler){
@@ -330,7 +330,7 @@ class UpdateModeProjectServiceSpec extends Specification implements ServiceUnitT
             getProjectProperties() >> propertiesData
         }
 
-        def mockFrameworkService = new MockFrameworkService(authorizeApplicationResource: true, projectList: projectList, frameworkProjectsTestData: [
+        def mockFrameworkService = new MockFrameworkService( projectList: projectList, frameworkProjectsTestData: [
                 TestProject: [projectProperties: propertiesData]
         ])
         mockFrameworkService.setRundeckProject(rundeckProject)
@@ -385,7 +385,7 @@ class UpdateModeProjectServiceSpec extends Specification implements ServiceUnitT
 
             def date = new Date() + 1
 
-            def mockFrameworkService = new MockFrameworkService(authorizeApplicationResource: true)
+            def mockFrameworkService = new MockFrameworkService()
             mockFrameworkService.setRundeckProject(rundeckProject)
             service.frameworkService = mockFrameworkService
             service.quartzScheduler = Mock(Scheduler) {

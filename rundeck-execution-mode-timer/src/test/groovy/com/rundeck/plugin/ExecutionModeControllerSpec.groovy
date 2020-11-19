@@ -1,7 +1,12 @@
 package com.rundeck.plugin
 
+import com.dtolabs.rundeck.core.authorization.AuthContextProcessor
+import com.dtolabs.rundeck.core.authorization.UserAndRolesAuthContext
+import com.dtolabs.rundeck.core.cluster.ClusterInfoService
 import grails.testing.web.controllers.ControllerUnitTest
+import org.rundeck.core.auth.AuthConstants
 import spock.lang.Specification
+import spock.lang.Unroll
 
 import javax.servlet.http.HttpServletResponse
 
@@ -10,7 +15,11 @@ class ExecutionModeControllerSpec extends Specification implements ControllerUni
 
     def "test getExecutionLater() auth"(){
         given:
-        controller.frameworkService = new MockFrameworkService(authorizeApplicationResource: true)
+            controller.rundeckAuthContextProcessor = Mock(AuthContextProcessor){
+                1 * getAuthContextForSubject(_)>>Mock(UserAndRolesAuthContext)
+                1 * authorizeApplicationResource(_, AuthConstants.RESOURCE_TYPE_SYSTEM, AuthConstants.ACTION_ADMIN)>> true
+                0*_(*_)
+            }
 
         controller.executionModeService = Mock(ExecutionModeService){
             getExecutionModeLater()>>[active:false]
@@ -28,7 +37,11 @@ class ExecutionModeControllerSpec extends Specification implements ControllerUni
 
     def "test getNextExecutionChangeStatus() auth"(){
         given:
-        controller.frameworkService = new MockFrameworkService(authorizeApplicationResource: true)
+            controller.rundeckAuthContextProcessor = Mock(AuthContextProcessor){
+                1 * getAuthContextForSubject(_)>>Mock(UserAndRolesAuthContext)
+                1 * authorizeApplicationResource(_, AuthConstants.RESOURCE_TYPE_SYSTEM, AuthConstants.ACTION_ADMIN)>> true
+                0*_(*_)
+            }
 
         controller.executionModeService = Mock(ExecutionModeService){
             getSystemModeChangeStatus()>> [active:false, msg:null]
@@ -46,7 +59,12 @@ class ExecutionModeControllerSpec extends Specification implements ControllerUni
 
     def "test api apiExecutionModeLaterActive auth"(){
         given:
-        controller.frameworkService = new MockFrameworkService(authorizeApplicationResource: false)
+            controller.rundeckAuthContextProcessor = Mock(AuthContextProcessor){
+                1 * getAuthContextForSubject(_)>>Mock(UserAndRolesAuthContext)
+                1 * authorizeApplicationResource(_, AuthConstants.RESOURCE_TYPE_SYSTEM, AuthConstants.ACTION_ADMIN)>> false
+                0*_(*_)
+            }
+        controller.clusterInfoService=Mock(ClusterInfoService)
         controller.apiService = new MockApiService(requireVersion: true)
         controller.executionModeService = Mock(ExecutionModeService){
             saveExecutionModeLater(_)>>true
@@ -65,7 +83,12 @@ class ExecutionModeControllerSpec extends Specification implements ControllerUni
 
     def "test api apiExecutionModeLaterPassive auth"(){
         given:
-        controller.frameworkService = new MockFrameworkService(authorizeApplicationResource: false)
+            controller.rundeckAuthContextProcessor = Mock(AuthContextProcessor){
+                1 * getAuthContextForSubject(_)>>Mock(UserAndRolesAuthContext)
+                1 * authorizeApplicationResource(_, AuthConstants.RESOURCE_TYPE_SYSTEM, AuthConstants.ACTION_ADMIN)>> false
+                0*_(*_)
+            }
+            controller.clusterInfoService=Mock(ClusterInfoService)
         controller.apiService = new MockApiService(requireVersion: true)
         controller.executionModeService = Mock(ExecutionModeService){
             saveExecutionModeLater(_)>>true
@@ -82,9 +105,14 @@ class ExecutionModeControllerSpec extends Specification implements ControllerUni
         response.status == 403
     }
 
+    @Unroll
     def "test api apiExecutionModeLaterActive valid"(){
         given:
-        controller.frameworkService = new MockFrameworkService(authorizeApplicationResource: true)
+            controller.rundeckAuthContextProcessor = Mock(AuthContextProcessor){
+                invocations * getAuthContextForSubject(_)>>Mock(UserAndRolesAuthContext)
+                invocations * authorizeApplicationResource(_, AuthConstants.RESOURCE_TYPE_SYSTEM, AuthConstants.ACTION_ADMIN)>> true
+                0*_(*_)
+            }
         controller.apiService = new MockApiService(requireVersion: true)
         controller.executionModeService = Mock(ExecutionModeService){
             saveExecutionModeLater(_)>>true
@@ -101,17 +129,22 @@ class ExecutionModeControllerSpec extends Specification implements ControllerUni
         response.status == statusCode
 
         where:
-        method      | statusCode
-        'POST'      | 200
-        'GET'       | 405
-        'PUT'       | 405
-        'DELETE'    | 405
+            method   | statusCode | invocations
+            'POST'   | 200        | 1
+            'GET'    | 405        | 0
+            'PUT'    | 405        | 0
+            'DELETE' | 405        | 0
 
     }
 
+    @Unroll
     def "test api apiExecutionModeLaterPassive valid"(){
         given:
-        controller.frameworkService = new MockFrameworkService(authorizeApplicationResource: true)
+            controller.rundeckAuthContextProcessor = Mock(AuthContextProcessor){
+                invocations * getAuthContextForSubject(_)>>Mock(UserAndRolesAuthContext)
+                invocations * authorizeApplicationResource(_, AuthConstants.RESOURCE_TYPE_SYSTEM, AuthConstants.ACTION_ADMIN)>> true
+                0*_(*_)
+            }
         controller.apiService = new MockApiService(requireVersion: true)
         controller.executionModeService = Mock(ExecutionModeService){
             saveExecutionModeLater(_)>>true
@@ -128,18 +161,22 @@ class ExecutionModeControllerSpec extends Specification implements ControllerUni
         response.status == statusCode
 
         where:
-        method      | statusCode
-        'POST'      | 200
-        'GET'       | 405
-        'PUT'       | 405
-        'DELETE'    | 405
+            method   | statusCode | invocations
+            'POST'   | 200        | 1
+            'GET'    | 405        | 0
+            'PUT'    | 405        | 0
+            'DELETE' | 405        | 0
 
     }
 
 
     def "test api apiExecutionModeLaterActive test"(){
         given:
-        controller.frameworkService = new MockFrameworkService(authorizeApplicationResource: true)
+            controller.rundeckAuthContextProcessor = Mock(AuthContextProcessor){
+                1 * getAuthContextForSubject(_)>>Mock(UserAndRolesAuthContext)
+                1 * authorizeApplicationResource(_, AuthConstants.RESOURCE_TYPE_SYSTEM, AuthConstants.ACTION_ADMIN)>> true
+                0*_(*_)
+            }
         controller.apiService = new MockApiService(requireVersion: true)
         controller.executionModeService = Mock(ExecutionModeService){
             getCurrentStatus()>>false
@@ -170,7 +207,11 @@ class ExecutionModeControllerSpec extends Specification implements ControllerUni
 
     def "test api apiExecutionModeLaterPassive test"(){
         given:
-        controller.frameworkService = new MockFrameworkService(authorizeApplicationResource: true)
+            controller.rundeckAuthContextProcessor = Mock(AuthContextProcessor){
+                1 * getAuthContextForSubject(_)>>Mock(UserAndRolesAuthContext)
+                1 * authorizeApplicationResource(_, AuthConstants.RESOURCE_TYPE_SYSTEM, AuthConstants.ACTION_ADMIN)>> true
+                0*_(*_)
+            }
         controller.apiService = new MockApiService(requireVersion: true)
         controller.executionModeService = Mock(ExecutionModeService){
             getCurrentStatus()>>true
