@@ -32,7 +32,7 @@ class ExecutionModeController {
         UserAndRolesAuthContext authContext = rundeckAuthContextProcessor.getAuthContextForSubject(session.subject)
         if (!rundeckAuthContextProcessor.authorizeApplicationResource(
             authContext,
-            AuthorizationUtil.resourceType('system'),
+            AuthConstants.RESOURCE_TYPE_SYSTEM,
             AuthConstants.ACTION_ADMIN
         )) {
             request.errorCode = 'request.error.unauthorized.message'
