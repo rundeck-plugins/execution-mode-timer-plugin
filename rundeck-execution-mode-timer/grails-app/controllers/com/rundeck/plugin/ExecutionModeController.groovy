@@ -1,17 +1,18 @@
 package com.rundeck.plugin
 
+import com.dtolabs.rundeck.core.authorization.AuthContextProcessor
 import com.dtolabs.rundeck.core.authorization.AuthorizationUtil
 import com.dtolabs.rundeck.core.authorization.UserAndRolesAuthContext
+import com.dtolabs.rundeck.core.cluster.ClusterInfoService
 import grails.converters.JSON
 import groovy.time.TimeCategory
 import groovy.time.TimeDuration
+import org.rundeck.core.auth.AuthConstants
 
 import javax.servlet.http.HttpServletResponse
 
 
 class ExecutionModeController {
-    static final String ACTION_ADMIN = "admin"
-    static final String RES_TYPE_SYSTEM = "system"
 
     static allowedMethods = [
             getExecutionLater: 'GET',
@@ -22,22 +23,23 @@ class ExecutionModeController {
     ]
 
     def executionModeService
-    def frameworkService
+    ClusterInfoService clusterInfoService
+    AuthContextProcessor rundeckAuthContextProcessor
     def apiService
 
     private boolean authorizeSystemAdmin() {
 
-        UserAndRolesAuthContext authContext = frameworkService.getAuthContextForSubject(session.subject)
-        if (!frameworkService.authorizeApplicationResource(
-                authContext,
-                AuthorizationUtil.resourceType('system'),
-                ACTION_ADMIN
+        UserAndRolesAuthContext authContext = rundeckAuthContextProcessor.getAuthContextForSubject(session.subject)
+        if (!rundeckAuthContextProcessor.authorizeApplicationResource(
+            authContext,
+            AuthConstants.RESOURCE_TYPE_SYSTEM,
+            AuthConstants.ACTION_ADMIN
         )) {
             request.errorCode = 'request.error.unauthorized.message'
             request.errorArgs = [
                     'Calendar (admin)',
                     'Server',
-                    frameworkService.getServerUUID()]
+                    clusterInfoService.getServerUUID()]
             response.status = HttpServletResponse.SC_FORBIDDEN
             request.titleCode = 'request.error.unauthorized.title'
 

@@ -1,17 +1,15 @@
 package com.rundeck.plugin
 
-import com.dtolabs.rundeck.core.authorization.AuthorizationUtil
+import com.dtolabs.rundeck.core.authorization.AuthContextProcessor
 import com.dtolabs.rundeck.core.common.IRundeckProject
 import grails.converters.JSON
 import groovy.time.TimeCategory
 import groovy.time.TimeDuration
+import org.rundeck.core.auth.AuthConstants
 
 import javax.servlet.http.HttpServletResponse
 
 class EditProjectController {
-
-    static final String ACTION_ADMIN = "admin"
-    static final String RES_TYPE_SYSTEM = "system"
 
     static allowedMethods = [
             getExecutionLater: 'GET',
@@ -21,17 +19,18 @@ class EditProjectController {
     ]
 
     def frameworkService
+    AuthContextProcessor rundeckAuthContextProcessor
     def updateModeProjectService
     def apiService
 
     def boolean requireAuth(String project) {
 
         def authContext =
-                frameworkService.getAuthContextForSubjectAndProject(session.subject, project)
-        if (!frameworkService.authorizeApplicationResource(
-                authContext,
-                AuthorizationUtil.resourceType(RES_TYPE_SYSTEM),
-                ACTION_ADMIN
+                rundeckAuthContextProcessor.getAuthContextForSubjectAndProject(session.subject, project)
+        if (!rundeckAuthContextProcessor.authorizeApplicationResource(
+            authContext,
+            rundeckAuthContextProcessor.authResourceForProject(project),
+            AuthConstants.ACTION_ADMIN
         )) {
             request.errorCode = 'request.error.unauthorized.message'
             request.errorArgs = ['Calendar (admin)', 'Server']
