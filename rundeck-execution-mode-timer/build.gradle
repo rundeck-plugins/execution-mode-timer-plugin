@@ -69,6 +69,7 @@ dependencies {
     compile "org.grails.plugins:scaffolding"
     compile "org.grails.plugins:gsp"
     console "org.grails:grails-console"
+    compile "org.yaml:snakeyaml:${snakeyamlVersion}"
     compileOnly "io.micronaut:micronaut-inject-groovy"
     compile "org.codehaus.groovy:groovy-dateutil:$groovyVersion"
 
