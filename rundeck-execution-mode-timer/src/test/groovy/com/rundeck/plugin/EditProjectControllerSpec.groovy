@@ -33,7 +33,7 @@ class EditProjectControllerSpec extends Specification implements ControllerUnitT
         controller.rundeckAuthContextProcessor = Mock(AuthContextProcessor){
             1 * getAuthContextForSubjectAndProject(_, projectName)>>Mock(UserAndRolesAuthContext)
             1 * authResourceForProject(projectName)>>[:]
-            1 * authorizeApplicationResource(_, _, AuthConstants.ACTION_ADMIN) >> true
+            1 * authorizeApplicationResourceAny(_, _, [AuthConstants.ACTION_ADMIN, AuthConstants.ACTION_APP_ADMIN]) >> true
             0*_(*_)
         }
 
@@ -60,7 +60,7 @@ class EditProjectControllerSpec extends Specification implements ControllerUnitT
         controller.rundeckAuthContextProcessor = Mock(AuthContextProcessor){
             1 * getAuthContextForSubjectAndProject(_, projectName)>>Mock(UserAndRolesAuthContext)
             1 * authResourceForProject(projectName)>>[:]
-            1 * authorizeApplicationResource(_, _, AuthConstants.ACTION_ADMIN) >> true
+            1 * authorizeApplicationResourceAny(_, _, [AuthConstants.ACTION_ADMIN, AuthConstants.ACTION_APP_ADMIN]) >> true
             0*_(*_)
         }
 
@@ -85,7 +85,7 @@ class EditProjectControllerSpec extends Specification implements ControllerUnitT
             controller.rundeckAuthContextProcessor = Mock(AuthContextProcessor){
                 1 * getAuthContextForSubjectAndProject(_, project)>>Mock(UserAndRolesAuthContext)
                 1 * authResourceForProject(project)>>[:]
-                1 * authorizeApplicationResource(_, _, AuthConstants.ACTION_ADMIN) >> false
+                1 * authorizeApplicationResourceAny(_, _, [AuthConstants.ACTION_ADMIN, AuthConstants.ACTION_APP_ADMIN]) >> false
                 0*_(*_)
             }
         controller.apiService = new MockApiService(requireVersion: true)
@@ -108,7 +108,7 @@ class EditProjectControllerSpec extends Specification implements ControllerUnitT
             controller.rundeckAuthContextProcessor = Mock(AuthContextProcessor){
                 1 * getAuthContextForSubjectAndProject(_, project)>>Mock(UserAndRolesAuthContext)
                 1 * authResourceForProject(project)>>[:]
-                1 * authorizeApplicationResource(_, _, AuthConstants.ACTION_ADMIN) >> false
+                1 * authorizeApplicationResourceAny(_, _, [AuthConstants.ACTION_ADMIN, AuthConstants.ACTION_APP_ADMIN]) >> false
                 0*_(*_)
             }
         controller.apiService = new MockApiService(requireVersion: true)
@@ -133,7 +133,7 @@ class EditProjectControllerSpec extends Specification implements ControllerUnitT
             controller.rundeckAuthContextProcessor = Mock(AuthContextProcessor){
                 invocations * getAuthContextForSubjectAndProject(_, project)>>Mock(UserAndRolesAuthContext)
                 invocations * authResourceForProject(project)>>[:]
-                invocations * authorizeApplicationResource(_, _, AuthConstants.ACTION_ADMIN) >> true
+                invocations * authorizeApplicationResourceAny(_, _, [AuthConstants.ACTION_ADMIN, AuthConstants.ACTION_APP_ADMIN]) >> true
                 0*_(*_)
             }
         controller.apiService = new MockApiService(requireVersion: true)
@@ -167,7 +167,7 @@ class EditProjectControllerSpec extends Specification implements ControllerUnitT
             controller.rundeckAuthContextProcessor = Mock(AuthContextProcessor){
                 invocations * getAuthContextForSubjectAndProject(_, project)>>Mock(UserAndRolesAuthContext)
                 invocations * authResourceForProject(project)>>[:]
-                invocations * authorizeApplicationResource(_, _, AuthConstants.ACTION_ADMIN) >> true
+                invocations * authorizeApplicationResourceAny(_, _, [AuthConstants.ACTION_ADMIN, AuthConstants.ACTION_APP_ADMIN]) >> true
                 0*_(*_)
             }
         controller.apiService = new MockApiService(requireVersion: true)
@@ -208,7 +208,7 @@ class EditProjectControllerSpec extends Specification implements ControllerUnitT
             controller.rundeckAuthContextProcessor = Mock(AuthContextProcessor){
                 1 * getAuthContextForSubjectAndProject(_, project)>>Mock(UserAndRolesAuthContext)
                 1 * authResourceForProject(project)>>[:]
-                1 * authorizeApplicationResource(_, _, AuthConstants.ACTION_ADMIN) >> true
+                1 * authorizeApplicationResourceAny(_, _, [AuthConstants.ACTION_ADMIN, AuthConstants.ACTION_APP_ADMIN]) >> true
                 0*_(*_)
             }
         mockFrameworkService.setRundeckProject(rundeckProject)
@@ -261,7 +261,7 @@ class EditProjectControllerSpec extends Specification implements ControllerUnitT
             controller.rundeckAuthContextProcessor = Mock(AuthContextProcessor){
                 1 * getAuthContextForSubjectAndProject(_, project)>>Mock(UserAndRolesAuthContext)
                 1 * authResourceForProject(project)>>[:]
-                1 * authorizeApplicationResource(_, _, AuthConstants.ACTION_ADMIN) >> true
+                1 * authorizeApplicationResourceAny(_, _, [AuthConstants.ACTION_ADMIN, AuthConstants.ACTION_APP_ADMIN]) >> true
                 0*_(*_)
             }
         mockFrameworkService.setRundeckProject(rundeckProject)

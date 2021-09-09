@@ -30,10 +30,10 @@ class ExecutionModeController {
     private boolean authorizeSystemAdmin() {
 
         UserAndRolesAuthContext authContext = rundeckAuthContextProcessor.getAuthContextForSubject(session.subject)
-        if (!rundeckAuthContextProcessor.authorizeApplicationResource(
+        if (!rundeckAuthContextProcessor.authorizeApplicationResourceAny(
             authContext,
             AuthConstants.RESOURCE_TYPE_SYSTEM,
-            AuthConstants.ACTION_ADMIN
+            [AuthConstants.ACTION_ADMIN, AuthConstants.ACTION_OPS_ADMIN]
         )) {
             request.errorCode = 'request.error.unauthorized.message'
             request.errorArgs = [
