@@ -17,7 +17,7 @@ class ExecutionModeControllerSpec extends Specification implements ControllerUni
         given:
             controller.rundeckAuthContextProcessor = Mock(AuthContextProcessor){
                 1 * getAuthContextForSubject(_)>>Mock(UserAndRolesAuthContext)
-                1 * authorizeApplicationResource(_, AuthConstants.RESOURCE_TYPE_SYSTEM, AuthConstants.ACTION_ADMIN)>> true
+                1 * authorizeApplicationResourceAny(_, AuthConstants.RESOURCE_TYPE_SYSTEM, [AuthConstants.ACTION_ADMIN, AuthConstants.ACTION_OPS_ADMIN])>> true
                 0*_(*_)
             }
 
@@ -39,7 +39,7 @@ class ExecutionModeControllerSpec extends Specification implements ControllerUni
         given:
             controller.rundeckAuthContextProcessor = Mock(AuthContextProcessor){
                 1 * getAuthContextForSubject(_)>>Mock(UserAndRolesAuthContext)
-                1 * authorizeApplicationResource(_, AuthConstants.RESOURCE_TYPE_SYSTEM, AuthConstants.ACTION_ADMIN)>> true
+                1 * authorizeApplicationResourceAny(_, AuthConstants.RESOURCE_TYPE_SYSTEM, [AuthConstants.ACTION_ADMIN, AuthConstants.ACTION_OPS_ADMIN])>> true
                 0*_(*_)
             }
 
@@ -61,7 +61,7 @@ class ExecutionModeControllerSpec extends Specification implements ControllerUni
         given:
             controller.rundeckAuthContextProcessor = Mock(AuthContextProcessor){
                 1 * getAuthContextForSubject(_)>>Mock(UserAndRolesAuthContext)
-                1 * authorizeApplicationResource(_, AuthConstants.RESOURCE_TYPE_SYSTEM, AuthConstants.ACTION_ADMIN)>> false
+                1 * authorizeApplicationResourceAny(_, AuthConstants.RESOURCE_TYPE_SYSTEM, [AuthConstants.ACTION_ADMIN, AuthConstants.ACTION_OPS_ADMIN])>> false
                 0*_(*_)
             }
         controller.clusterInfoService=Mock(ClusterInfoService)
@@ -85,7 +85,7 @@ class ExecutionModeControllerSpec extends Specification implements ControllerUni
         given:
             controller.rundeckAuthContextProcessor = Mock(AuthContextProcessor){
                 1 * getAuthContextForSubject(_)>>Mock(UserAndRolesAuthContext)
-                1 * authorizeApplicationResource(_, AuthConstants.RESOURCE_TYPE_SYSTEM, AuthConstants.ACTION_ADMIN)>> false
+                1 * authorizeApplicationResourceAny(_, AuthConstants.RESOURCE_TYPE_SYSTEM, [AuthConstants.ACTION_ADMIN, AuthConstants.ACTION_OPS_ADMIN])>> false
                 0*_(*_)
             }
             controller.clusterInfoService=Mock(ClusterInfoService)
@@ -110,7 +110,7 @@ class ExecutionModeControllerSpec extends Specification implements ControllerUni
         given:
             controller.rundeckAuthContextProcessor = Mock(AuthContextProcessor){
                 invocations * getAuthContextForSubject(_)>>Mock(UserAndRolesAuthContext)
-                invocations * authorizeApplicationResource(_, AuthConstants.RESOURCE_TYPE_SYSTEM, AuthConstants.ACTION_ADMIN)>> true
+                invocations * authorizeApplicationResourceAny(_, AuthConstants.RESOURCE_TYPE_SYSTEM, [AuthConstants.ACTION_ADMIN, AuthConstants.ACTION_OPS_ADMIN])>> true
                 0*_(*_)
             }
         controller.apiService = new MockApiService(requireVersion: true)
@@ -142,7 +142,7 @@ class ExecutionModeControllerSpec extends Specification implements ControllerUni
         given:
             controller.rundeckAuthContextProcessor = Mock(AuthContextProcessor){
                 invocations * getAuthContextForSubject(_)>>Mock(UserAndRolesAuthContext)
-                invocations * authorizeApplicationResource(_, AuthConstants.RESOURCE_TYPE_SYSTEM, AuthConstants.ACTION_ADMIN)>> true
+                invocations * authorizeApplicationResourceAny(_, AuthConstants.RESOURCE_TYPE_SYSTEM, [AuthConstants.ACTION_ADMIN, AuthConstants.ACTION_OPS_ADMIN])>> true
                 0*_(*_)
             }
         controller.apiService = new MockApiService(requireVersion: true)
@@ -174,7 +174,7 @@ class ExecutionModeControllerSpec extends Specification implements ControllerUni
         given:
             controller.rundeckAuthContextProcessor = Mock(AuthContextProcessor){
                 1 * getAuthContextForSubject(_)>>Mock(UserAndRolesAuthContext)
-                1 * authorizeApplicationResource(_, AuthConstants.RESOURCE_TYPE_SYSTEM, AuthConstants.ACTION_ADMIN)>> true
+                1 * authorizeApplicationResourceAny(_, AuthConstants.RESOURCE_TYPE_SYSTEM, [AuthConstants.ACTION_ADMIN, AuthConstants.ACTION_OPS_ADMIN])>> true
                 0*_(*_)
             }
         controller.apiService = new MockApiService(requireVersion: true)
@@ -209,7 +209,7 @@ class ExecutionModeControllerSpec extends Specification implements ControllerUni
         given:
             controller.rundeckAuthContextProcessor = Mock(AuthContextProcessor){
                 1 * getAuthContextForSubject(_)>>Mock(UserAndRolesAuthContext)
-                1 * authorizeApplicationResource(_, AuthConstants.RESOURCE_TYPE_SYSTEM, AuthConstants.ACTION_ADMIN)>> true
+                1 * authorizeApplicationResourceAny(_, AuthConstants.RESOURCE_TYPE_SYSTEM, [AuthConstants.ACTION_ADMIN, AuthConstants.ACTION_OPS_ADMIN])>> true
                 0*_(*_)
             }
         controller.apiService = new MockApiService(requireVersion: true)

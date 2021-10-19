@@ -27,10 +27,10 @@ class EditProjectController {
 
         def authContext =
                 rundeckAuthContextProcessor.getAuthContextForSubjectAndProject(session.subject, project)
-        if (!rundeckAuthContextProcessor.authorizeApplicationResource(
+        if (!rundeckAuthContextProcessor.authorizeApplicationResourceAny(
             authContext,
             rundeckAuthContextProcessor.authResourceForProject(project),
-            AuthConstants.ACTION_ADMIN
+            [AuthConstants.ACTION_ADMIN, AuthConstants.ACTION_APP_ADMIN]
         )) {
             request.errorCode = 'request.error.unauthorized.message'
             request.errorArgs = ['Calendar (admin)', 'Server']
