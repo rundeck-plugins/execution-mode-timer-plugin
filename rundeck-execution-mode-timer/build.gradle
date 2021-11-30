@@ -106,3 +106,7 @@ assets {
 
     includes = ['**/*.js', '**/*.css', '**/*.png', '**/*.svg']
 }
+
+gradle.beforeProject {
+    file("grails-app/assets").mkdir()
+}
