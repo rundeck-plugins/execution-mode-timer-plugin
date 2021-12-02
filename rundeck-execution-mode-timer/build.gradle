@@ -38,6 +38,7 @@ configurations{
         exclude group: 'ch.qos.logback', module: 'logback-classic'
         exclude group: 'ch.qos.logback', module: 'logback-core'
     }
+    provided
 }
 
 
@@ -74,9 +75,9 @@ dependencies {
     implementation "org.codehaus.groovy:groovy-dateutil:$groovyVersion"
 
     profile "org.grails.profiles:web-plugin"
-    implementation "org.grails:grails-plugin-services"
-    implementation "org.grails:grails-plugin-domain-class"
-    implementation "com.bertramlabs.plugins:asset-pipeline-grails:$assetPluginVersion"
+    provided "org.grails:grails-plugin-services"
+    provided "org.grails:grails-plugin-domain-class"
+    provided "com.bertramlabs.plugins:asset-pipeline-grails:$assetPluginVersion"
 
     testImplementation "org.grails:grails-gorm-testing-support"
     testImplementation "org.mockito:mockito-core"
