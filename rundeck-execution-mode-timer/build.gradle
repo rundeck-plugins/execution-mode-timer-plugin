@@ -98,6 +98,10 @@ bootRun {
 // enable if you wish to package this plugin as a standalone application
 bootJar.enabled = false
 
+tasks.withType(Test) {
+    useJUnitPlatform()
+}
+
 assets {
     minifyJs = false
     minifyCss = false
