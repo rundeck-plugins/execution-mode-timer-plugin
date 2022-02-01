@@ -146,7 +146,7 @@ jQuery(function () {
     executionModeDiv.id = "executionModeLater";
     para.appendChild(executionModeDiv);
 
-    var x = jQuery(".main-panel .content").prepend(para);
+    var x = jQuery("#section-content").prepend(para);
 
     var type = "alert-success"
     if(action == "disable"){
