@@ -9,12 +9,16 @@ buildscript {
         classpath "com.bertramlabs.plugins:asset-pipeline-gradle:$assetPluginVersion"
     }
 }
-
+plugins {
+    id "java-library"
+    id "war"
+}
 apply plugin:"eclipse"
 apply plugin:"idea"
 apply plugin:"org.grails.grails-plugin"
 apply plugin:"asset-pipeline"
 apply plugin:"org.grails.grails-gsp"
+apply plugin:"war"
 
 
 repositories {
@@ -24,6 +28,8 @@ repositories {
 }
 
 configurations{
+    war{}
+    bootWar{}
     //define libs needed to be bundled into the WEB-INF/lib dir of the war
     exportedLibs
     compile{
@@ -113,3 +119,6 @@ assets {
     includes = ['**/*.js', '**/*.css', '**/*.png', '**/*.svg']
 }
 
+bootWar {
+    enabled=true
+}
