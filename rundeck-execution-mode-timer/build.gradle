@@ -108,10 +108,8 @@ assets {
     verbose = true
     packagePlugin = project.findProperty('packagePlugin')?: false
     configOptions = [commonJs:false]
+    assetsPath = "grails-app"
 
     includes = ['**/*.js', '**/*.css', '**/*.png', '**/*.svg']
 }
 
-gradle.beforeProject {
-    file("grails-app/assets").mkdir()
-}
