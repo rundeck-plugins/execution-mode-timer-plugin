@@ -1,3 +1,7 @@
+# MAINTENANCE BRANCH 3.4.x
+
+This branch is for maintenance for Rundeck 3.4.x compatibility
+
 # Enable/Disable Execution/Scheduled Later plugin
 
 This plugin adds to Rundeck the functionality to enable/disable the execution/schedule for X time. This can be set at a project or the system level.
