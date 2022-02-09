@@ -3,10 +3,12 @@ buildscript {
         mavenLocal()
         mavenCentral()
         maven { url "https://repo.grails.org/grails/core" }
+        maven { url "https://jitpack.io" }
     }
     dependencies {
         classpath "org.grails:grails-gradle-plugin:$grailsGradlePluginVersion"
-        classpath "com.bertramlabs.plugins:asset-pipeline-gradle:$assetPluginVersion"
+        //classpath "com.bertramlabs.plugins:asset-pipeline-gradle:$assetPluginVersion"
+        classpath "com.github.bertramdev.asset-pipeline:asset-pipeline-gradle:$assetPluginVersion"
     }
 }
 
@@ -77,7 +79,8 @@ dependencies {
     profile "org.grails.profiles:web-plugin"
     provided "org.grails:grails-plugin-services"
     provided "org.grails:grails-plugin-domain-class"
-    provided "com.bertramlabs.plugins:asset-pipeline-grails:$assetPluginVersion"
+    //provided "com.bertramlabs.plugins:asset-pipeline-grails:$assetPluginVersion"
+    provided "com.github.bertramdev.asset-pipeline:asset-pipeline-grails:$assetPluginVersion"
 
     testImplementation "org.grails:grails-gorm-testing-support"
     testImplementation "org.mockito:mockito-core"
